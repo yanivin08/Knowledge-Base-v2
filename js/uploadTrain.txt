@@ -1,0 +1,314 @@
+var category = document.getElementById('categoryList'),
+	month = document.getElementById('monthList'),
+	day = document.getElementById('dayList'),
+	year = document.getElementById('yearList'),
+	trainTitle = document.getElementById('trainTitle'),
+	trainCategory = document.getElementById('trainCategory').getElementsByTagName('select')[0],
+	trainEmp = document.getElementById('trainEmpID'),
+	trainMonth = document.getElementById('trainMonth').getElementsByTagName('select')[0],
+	trainDay = document.getElementById('trainDay').getElementsByTagName('select')[0],
+	trainYear = document.getElementById('trainYear').getElementsByTagName('select')[0],
+	err = document.getElementById('errorMsg'),
+	msg = document.getElementById('msgBx').getElementsByTagName('span')[0],
+	fsObj = new ActiveXObject("Scripting.FileSystemObject");
+	
+var svgView = false;
+var processArray = [];
+
+var srcPath = document.getElementsByTagName('script')[0].src,
+	docPath = srcPath.substring(0,srcPath.lastIndexOf("/"));
+	docPath = docPath.replaceAll("%20"," ").substring(filePathIndex(docPath),docPath.length);
+		
+function clearField(){
+	trainTitle.value = "";
+	trainEmp.value = "";
+	trainMonth.value = "";
+	trainDay.value = "";
+	trainYear.value = "";
+	trainCategory.value = "";
+	
+	document.getElementById('svgTools').innerHTML = "";
+	document.getElementById('svgChart').innerHTML = "";
+	shapes = [];
+	lines = [];
+	svgView = false;
+}
+
+
+/*uploading training modules*/
+function uploadModule(){
+	var uploaded = false;
+				
+	if(trainTitle.value != "" && trainCategory.value != "" && trainEmp.value != "" && trainMonth.value != "" && trainDay.value != "" &&
+		trainYear.value != ""){
+		var id = checkUser();
+		
+		if(id == trainEmp.value){
+			if(approveId.indexOf(id) != -1){
+				if(shapes.length > 0){
+					checkArray();
+					var textContent = createArrayString();
+
+					var txtPath = docPath + "/training/" + trainCategory.value,
+						txtName = "/" + trainTitle.value + "_" + trainMonth.value + "_" + trainDay.value + "_" + trainYear.value + ".tr",
+						txtShape = "/" + trainTitle.value + "_" + trainMonth.value + "_" + trainDay.value + "_" + trainYear.value + ".ts",
+						txtText = "/" + trainTitle.value + "_" + trainMonth.value + "_" + trainDay.value + "_" + trainYear.value + ".tx",
+						txtArr = "/" + trainTitle.value + "_" + trainMonth.value + "_" + trainDay.value + "_" + trainYear.value + ".ta",
+						txtLine = "/" + trainTitle.value + "_" + trainMonth.value + "_" + trainDay.value + "_" + trainYear.value + ".tl";
+						
+						/*create folder if not exist*/
+						if(!fsObj.FolderExists(txtPath)){
+							fsObj.CreateFolder(txtPath);
+						}
+						
+						if(fsObj.FileExists(txtPath + txtName)){
+							alert("Title already exist in this module");
+						}
+						
+					var txtN = fsObj.CreateTextFile(txtPath + txtName, true);
+						txtN.writeline(textContent);
+						txtN.Close();
+						
+						if(fsObj.FileExists(txtPath + txtShape)){
+							alert("Title already exist in this module");
+						}
+					
+					var svgChart = document.getElementById('svgChart').innerHTML
+					
+					var txtS = fsObj.CreateTextFile(txtPath + txtShape, true);
+						txtS.writeline(svgChart.substring(svgChart.indexOf('<svg')));
+						txtS.Close();
+						
+						if(fsObj.FileExists(txtPath + txtText)){
+							alert("Title already exist in this module");
+						}
+						
+					var txtT = fsObj.CreateTextFile(txtPath + txtText, true);
+						txtT.writeline(document.getElementById('shapeHolder').innerHTML);
+						txtT.Close();
+						
+						if(fsObj.FileExists(txtPath + txtArr)){
+							alert("Title already exist in this module");
+						}
+						
+					var txtA = fsObj.CreateTextFile(txtPath + txtArr, true);
+						txtA.writeline(JSON.stringify(shapes));
+						txtA.Close();
+						
+						if(fsObj.FileExists(txtPath + txtLine)){
+							alert("Title already exist in this module");
+						}
+						
+					var txtL = fsObj.CreateTextFile(txtPath + txtLine, true);
+						txtL.writeline(JSON.stringify(lines));
+						txtL.Close();
+						
+						
+					var newContent = {};
+						newContent.title = trainTitle.value;
+						newContent.category = trainCategory.value;
+						newContent.module = "training";
+						newContent.date = trainMonth.value + " " + trainDay.value + ", " + trainYear.value;
+						newContent.path = ("/training/" + trainCategory.value + txtName).replaceAll(" ","%20");
+						newContent.imgpath = "img/main/default.png";
+						newContent.filepath = "none";
+						newContent.empid = trainEmp.value;
+						newContent.visit = 0
+						
+					data.push(newContent);
+						
+					var jsonPath = docPath + "/updates.txt",
+						jsonWrite = fsObj.OpenTextFile(jsonPath, 2);
+						jsonWrite.WriteLine(JSON.stringify(data));
+						jsonWrite.Close();
+						
+					alert("Update has been uploaded!");
+					clearField();
+					
+				}else{
+					msg.innerText = "Please create a process map"
+					err.style.display = "block";
+					err.style.opacity = "1";
+				}
+			}else{
+				msg.innerText = "You are not authorized to upload and amend any updates in this tool."
+				err.style.display = "block";
+				err.style.opacity = "1";
+			}
+		}else{
+			msg.innerText = "Seems like you are trying to use other Employee ID, please try again."
+			err.style.display = "block";
+			err.style.opacity = "1";
+		}
+	}else{
+		msg.innerText = "Please fill up all required field before uploading the form"
+		err.style.display = "block";
+		err.style.opacity = "1";
+	}
+}
+
+function createArrayString(){
+
+	var dest = docPath.substring(0,docPath.lastIndexOf("/")) + "/";
+
+	var str = "[";
+	processArray.forEach(function(i,j){
+	
+		var attachFle,attachImg;
+		
+		if(i.file != ""){
+			var fileExt = i.file.substring(i.file.lastIndexOf("."),i.file.length);
+			var fileName = randomID() + trainDay.value + fileExt;
+			fsObj.CopyFile(i.file, dest + "attach/" + fileName, false); /*copy from orig to dest*/
+			attachFle = "/attach/training" + fileName;
+		}else{
+			attachFle = "none";
+		}
+		
+		if(i.image != ""){
+			var fileExt = i.image.substring(i.image.lastIndexOf("."),i.image.length);
+			var fileName = randomID() + trainDay.value + fileExt;
+			fsObj.CopyFile(i.image, dest + "img/training/" + fileName, false); /*copy from orig to dest*/
+			attachImg = "img/training/" + fileName;
+		}else{
+			attachImg = "none";
+		}
+	
+		str += "{\"id\":\"" + i.id + "\"," +
+			   "\"type\":\"" + i.type + "\"," +
+			   "\"text\":\"" + i.text + "\"," +
+			   "\"image\":\"" + attachImg + "\"," +
+			   "\"file\":\"" + attachFle + "\",";
+			   
+		if(i.type != "Conditional"){
+			str += "\"connectedTo\":\"" + i.connectedTo + "\"}";
+		}else{
+			str += "\"connectedTo\":{\"yes\":\"" + i.connectedTo.yes + "\",\"no\":\"" + i.connectedTo.no + "\"}}";
+		}
+		
+		if(j != processArray.length -1){
+			str += ",";
+		}
+	});
+	
+	return str + "]";
+}
+
+function createArray(i){
+
+	var indexId = (processArray.length > 0) ? processArray.map(function(j){ return j.id; }).indexOf(shapes[i].id) : -1;
+	
+	if(indexId == -1){
+		var temp = {};
+		var nextInd, nextIndY, nextIndN;
+		
+		temp.text = shapes[i].text;
+		temp.id = shapes[i].id;
+		temp.type = shapes[i].name;
+		temp.image = shapes[i].image;
+		temp.file = shapes[i].file;
+		
+		if(shapes[i].step != "LAST"){
+			
+			if(shapes[i].shape != "Diamond"){
+			
+				temp.connectedTo = shapes[i].connectedTo;
+				processArray.push(temp);
+				
+				nextInd = shapes.map(function(j){ return j.id; }).indexOf(shapes[i].connectedTo);
+				createArray(nextInd);
+				
+			}else{
+			
+				temp.connectedTo = {};
+				temp.connectedTo.yes = shapes[i].yes.id;
+				temp.connectedTo.no = shapes[i].no.id;
+				processArray.push(temp);
+				
+				nextIndY = shapes.map(function(j){ return j.id; }).indexOf(shapes[i].yes.id);
+				createArray(nextIndY);
+				
+				nextIndN = shapes.map(function(j){ return j.id; }).indexOf(shapes[i].no.id);
+				createArray(nextIndN);
+				
+			}
+		}else{
+		
+			processArray.push(temp);
+		}
+	}
+}
+
+function checkArray(){
+	startInd = shapes.map(function(i){ return i.step; }).indexOf("FIRST");
+	lastInd = shapes.map(function(i){ return i.step; }).indexOf("LAST");
+	
+	if(startInd == -1 || lastInd == -1){
+		msg.innerText = "Process map has not yest finished. Please double check"
+		err.style.display = "block";
+		err.style.opacity = "1";
+	}else{
+		if(shapes[startInd].connectedTo == "" || shapes[lastInd].connectedFrom == ""){
+			msg.innerText = "Shapes has not connected properly, please double check"
+			err.style.display = "block";
+			err.style.opacity = "1";
+		}else{
+			processArray = [];
+			createArray(startInd);
+		}
+	}
+}
+
+
+function hideError(){
+	var err = document.getElementById('errorMsg');
+		err.style.display = "none";
+		err.style.opacity = "0";
+}
+
+function showproMap(){
+	document.getElementById('process-map').style.display = 'block';
+	viewSVG();
+}
+
+function hideproMap(){
+	document.getElementById('process-map').style.display = 'none';
+}
+
+
+function viewSVG(){
+	if(!svgView){
+		var mDown = false
+
+		var svgTools = document.querySelector('#svgTools'),
+			svgChart = document.querySelector('#svgChart');
+			
+		var tools = new SVG(svgTools,'Tools'),
+			chart = new SVG(svgChart,'Workspace');
+				
+		tools.showTools();
+
+		svgChart.addEventListener('mousedown',function(e){
+			mDown = true;
+			chart.addShape(e.clientX,e.clientY,e.target);
+			chart.selectShape(e.clientX,e.clientY,e.target);
+		});
+
+		svgChart.addEventListener('mouseup',function(e){
+			mDown = false;		
+			chart.updateShape(e.clientX,e.clientY,e.target,false);
+		});
+
+		svgChart.addEventListener('mousemove',function(e){		
+			if(mDown){
+				chart.updateShape(e.clientX,e.clientY,e.target,true);
+				chart.moveShape(e.clientX,e.clientY,e.target);
+				chart.resizeShape(e.clientX,e.clientY,e.target);
+			}else{
+				chart.restyleShape(e.clientX,e.clientY,e.target);
+			}
+		});
+		svgView = true;
+	}
+}
+

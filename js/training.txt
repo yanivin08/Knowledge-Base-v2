@@ -1,0 +1,94 @@
+/*animation onload*/
+
+function onLoad(){
+	var matchDiv = document.getElementById("matchDiv"),
+		termsDiv = document.getElementById("termsDiv"),
+		commDiv = document.getElementById("commDiv"),
+		accessDiv = document.getElementById("accessDiv"),
+		billClassDiv = document.getElementById("billClassDiv"),
+		hazmatDiv = document.getElementById("hazmatDiv"),
+		crossDiv = document.getElementById("crossDiv"),
+		srnDiv = document.getElementById("srnDiv"),
+		remarksDiv = document.getElementById("remarksDiv");
+	matchDiv.style.opacity = "1";
+	matchDiv.style.top = "6%";
+	termsDiv.style.opacity = "1";
+	termsDiv.style.top = "6%";
+	commDiv.style.opacity = "1";
+	commDiv.style.top = "6%";
+	accessDiv.style.opacity = "1";
+	accessDiv.style.top = "37%";
+	billClassDiv.style.opacity = "1";
+	billClassDiv.style.top = "37%";
+	hazmatDiv.style.opacity = "1";
+	hazmatDiv.style.top = "37%";
+	crossDiv.style.opacity = "1";
+	crossDiv.style.bottom = "6%";
+	srnDiv.style.opacity = "1";
+	srnDiv.style.bottom = "6%";
+	remarksDiv.style.opacity = "1";
+	remarksDiv.style.bottom = "6%";
+}
+
+/*add all module to a specific category*/
+function viewModule(title){
+	var showTitle = document.getElementById('trainingTitle').getElementsByTagName('h1')[0],
+		showContent = document.getElementById('trainingContent').getElementsByTagName('ul')[0],
+		trainingModule = document.getElementById('trainingDiv'),
+		showDocs = document.getElementById('trainingDocs'),
+		content = "";
+	showTitle.innerText = title.toUpperCase();
+	for(updates in data){
+		if(data[updates].module == "training"){
+			if(data[updates].category == title){ /*gathered all the module that matches the title*/
+				content = content + "<li><a onclick=\"viewUpdates('" + title + "','" + data[updates].title + "','" + data[updates].path  + "','" + data[updates].imgpath + "','" + data[updates].filepath + "','" + data[updates].date + "','" + data[updates].empid  + "')\" href=\"#\">" + data[updates].title +
+						"</a> <span class=\"spanDel\" onclick=\"deleteUpdates('" + data[updates].title + "','" + data[updates].date + "','" + data[updates].path + "','" + data[updates].imgpath + "','" + data[updates].filepath + "')\"> [DELETE]</span>" + 
+						"<span class=\"spanEdt\" onclick=\"editUpdates('" + data[updates].title + "','" + data[updates].category + "','" + data[updates].date + "','" + data[updates].module + "')\"> [EDIT]</span></li>";
+			}
+		}
+	}
+	showContent.innerHTML = content;
+	trainingModule.style.display = 'none';
+	showDocs.style.display = 'block';
+}
+
+/*go back to the training main page*/
+function gobackMain(){
+	var trainingModule = document.getElementById('trainingDiv'),
+		showDocs = document.getElementById('trainingDocs');
+		
+	trainingModule.style.display = 'block';
+	showDocs.style.display = 'none';	
+}
+
+/*go back to the category*/
+function goback(){
+	var viewer = document.getElementById('trainViewer');
+	//document.getElementById('imgViewer').style.display = 'none';
+	//document.getElementById('viewerContent').getElementsByTagName('a')[0].style.display = "none";
+	viewer.style.display = 'none';
+}
+
+/*show content of the selected module*/
+function viewUpdates(ctgry,title,xpath,img,file,dte,nme){
+	var head = document.getElementById('viewerHeader'),
+		trainHeader = head.getElementsByTagName('p')[0],
+		trainTitle = head.getElementsByTagName('h1')[0],
+		nxtButton = document.getElementById('nextButton');
+	
+	//document.getElementById('trainingDocs').style.display = 'none';
+	document.getElementById('trainViewer').style.display = 'block';
+	
+	document.getElementById('contentList').innerHTML = "";
+	document.getElementById('pButton').style.display = "table";
+	nxtButton.innerHTML += "<br/><p>Click to start</p>";
+	
+	trainHeader.innerText = ctgry.toUpperCase();
+	trainTitle.innerText = title.toUpperCase();
+	currInd = 0;
+	steps = 0;
+	counterModules(xpath,title,ctgry);
+	processMap = JSON.parse(readFile(src + xpath));
+		
+}
+

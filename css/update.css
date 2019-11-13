@@ -1,0 +1,614 @@
+body {
+	font-family: arial;
+	margin: 0;
+	padding: 0;
+}
+/*--------------upper DIV----------------*/
+#upDiv{
+	position: absolute;
+	top: 0%;
+	height: 10%;
+	width: 100%;
+	background-color: rgb(250,250,250);
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+	z-index: 1;
+}
+#upDiv img{
+	position: absolute;
+	height: 90%;
+	width: auto;
+	top: 5%;
+	left: 5%;
+}
+
+#upDiv a{
+	text-decoration: none;
+	color: black;
+}
+
+#upDiv a:hover{
+	color: rgb(0, 148, 255);
+}
+
+#menuHome{
+	position: absolute;
+	right: 30%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#menuDashboard {
+    position: absolute;
+    right: 19%;
+    top: 25%;
+	font-size:calc(.7vw + .7vh);
+	padding-left: 2%;
+	/*background: #fafafa url("../img/main/Picture3.png") no-repeat 0% 50%*/
+}
+
+#menuDashboard:hover {
+	/*background: #fafafa url("../img/main/Picture4.png") no-repeat 0% 50%*/
+}
+
+#menuUpload{
+	position: absolute;
+	right: 10%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#uploadMenu{
+	display: none;
+	position: absolute;
+	width: 12%;
+	background-color: black;
+	z-index: 1;
+	top: 10.5%;
+	font-size:calc(.7vw + .7vh);
+	left: 82%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+#uploadArrow{
+	position: absolute;
+	color: black;
+	left: 86%;
+	top: 2%;
+	z-index: 1;
+	font-size:calc(2vw + 2vh);
+	display: none;
+}
+
+#uploadMenu a{
+	text-decoration: none;
+	color: white;
+}
+
+#uploadMenu ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#uploadMenu li{
+	padding: 10%;
+}
+
+#uploadMenu li:hover{
+	background-color: rgb(0, 148, 255);
+}
+
+/*--------------footer DIV----------------*/
+#footDiv{
+	position: absolute;
+	height: 3%;
+	width: 100%;
+	background-color: rgb(50,50,50);
+	top: 97%;
+}
+
+/*updates selector*/
+
+#updteSelect{
+	position: absolute;
+	height: 75%;
+	width: 65%;
+	top: 20%;
+	left : 5%;
+	display: block;
+}
+
+#latest{
+	position: absolute;
+	width: 70%;
+	height: 25%;
+	top: 6.5%;
+	background-color: rgb(250,250,250);
+}
+
+#previous{
+	position: absolute;
+	width: 70%;
+	height: 25%;
+	top: 37.5%;
+	background-color: rgb(250,250,250);
+}
+
+#byDate{
+	position: absolute;
+	width: 70%;
+	height: 25%;
+	top: 68.5%;
+	background-color: rgb(250,250,250);
+}
+
+.selections{
+	left: 15%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+.selections h1{
+	position: absolute;
+	color: rgb(0, 148, 255);
+	font-family: Arial Black;
+	font-size:calc(.8vw + .8vh);
+	left: 10%;
+	top: 10%;
+	width: 80%;
+	text-align: left;
+}
+
+.selections p{
+	position: absolute;
+	color: black;
+	font-size:calc(.7vw + .7vh);
+	top: 30%;
+	left: 15%;
+	width: 30%;
+	text-align: left;
+}
+
+.selections input{
+	position: absolute;
+	color: white;
+	background-color: rgb(0, 148, 255);
+	border: none;
+	height: 25%;
+	width: 25%;
+	right: 15%;
+	top: 35%;
+	cursor: pointer;
+}
+
+.selections input:hover{
+	background-color: rgb(105,191,255);
+}
+/*--------------training docs DIV----------------*/
+
+#updateDocs{
+	position: absolute;
+	height: 87%;
+	width: 100%;
+	top: 10%;
+	display: block;
+}
+
+#updateTitle{
+	position: absolute;
+	height: 15%;
+	width: 100%;
+	background-color: rgb(0, 148, 255);
+}
+
+#updateTitle h1{
+	position: absolute;
+	color: white;
+	font-size:calc(1.2vw + 1.2vh);
+	font-family: arial black;
+	top: 25%;
+	left: 5%;
+}
+
+#updateTitle p{
+	position: absolute;
+	color: white;
+	font-size:calc(.6vw + .6vh);
+	font-family: arial;
+	top: 19%;
+	left: 5%;
+}
+
+#updateContent{
+	position: absolute;
+	height: 75%;
+	width: 65%;
+	top: 20%;
+	left : 5%;
+	display: none;
+}
+
+#updateContent h3{
+	margin: 4%;
+	margin-left: 7%;
+	color: rgb(150,150,150);
+	font-size:calc(.9vw + .9vh);
+}
+
+#updateContent ul{
+	list-style-type: none;
+	margin-top: 5%;
+	margin-left: 3%;
+}
+
+#updateContent li{
+	padding-bottom: 2%;
+}
+
+#updateContent a{
+	text-decoration: none;
+	color: black;
+}
+
+#updateContent a:hover{
+	text-decoration: underline;
+	color: rgb(0, 148, 255);
+}
+
+#updateLinks{
+	background-color: rgb(200,200,200);
+	position: absolute;
+	height: 75%;
+	width: 20%;
+	top: 20%;
+	left : 75%;
+}
+
+#updateLinks h1{
+	position: absolute;
+	top: 5%;
+	left: 15%;
+	font-size:calc(.8vw + .8vh);
+	color: rgb(0, 148, 255);
+}
+
+#updateLinks ul{
+	position: absolute;
+	top: 16%;
+	left: 16%;
+	margin: 0;
+	padding: 0;
+	list-style-type: none; 
+}
+
+#updateLinks li{
+	font-size:calc(.6vw + .6vh);
+	padding-bottom: 8%;
+}
+
+#updateLinks b{
+	color: rgb(0, 148, 255);
+	font-size:calc(.7vw + .7vh);
+}
+
+#updateLinks a{
+	text-decoration: none;
+	color: rgb(80,80,80);
+}
+
+#updateLinks a:hover{
+	text-decoration: underline;
+}
+
+/*date picker*/
+#selector{
+	position: absolute;
+	top: 10%;
+	left: 8%;
+	height: 10%;
+	width: 80%;
+}
+
+#selectMonth{
+	position: absolute;
+	top: 15%;
+	height: 35%;
+	width: 15%;
+	padding-left: 1.5%;
+	border: 1px solid rgb(150,150,150);
+	font-size:calc(.6vw + .6vh);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 95% 50%;
+}
+
+#selectMonth select{
+	/*padding: 6px 8px;*/
+	padding-top: 2px;
+	width: 130%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+}
+
+#selectDay{
+	position: absolute;
+	top: 15%;
+	left: 18%;
+	height: 35%;
+	width: 8%;
+	padding-left: 1.5%;
+	border: 1px solid rgb(150,150,150);
+	font-size:calc(.6vw + .6vh);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 94% 50%;
+}
+
+#selectDay select{
+	/*padding: 6px 8px;*/
+	padding-top: 2px;
+	width: 140%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+}
+
+#selectYear{
+	position: absolute;
+	top: 15%;
+	left: 29%;
+	height: 35%;
+	width: 9%;
+	padding-left: 1.5%;
+	border: 1px solid rgb(150,150,150);
+	font-size:calc(.6vw + .6vh);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 94% 50%;
+}
+
+#selectYear select{
+	padding-top: 2px;
+	width: 140%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+}
+
+#searchUpdates{
+	position: absolute;
+	top: 15%;
+	left: 45%;
+	height: 40%;
+	width: 12%;
+	color: white;
+	border: none;
+	background-color: rgb(0, 148, 255);
+	font-size:calc(.5vw + .5vh);
+}
+
+.hideSearch {
+    position: absolute;
+    bottom: 5%;
+    left: 5%;
+    background-color: rgb(0, 148, 255);
+    border: none;
+    color: white;
+    height: 5%;
+    width: 12%;
+    font-size: calc(.5vw + .5vh);
+	cursor: pointer;
+}
+
+.hideSearch:hover {
+	background-color: rgb(105,191,255);
+}
+
+/*------------------*/
+
+
+/*viwer*/
+
+#updateViewer{
+	position: absolute;
+	height: 75%;
+	width: 75%;
+	top: 20%;
+	left: 10%;
+	display: none;
+}
+
+#updateViewer h4{
+	position: absolute;
+	padding: 0;
+	margin: 0;
+	top: 5%;
+	left: 5%;
+	color: rgb(150, 150, 150);
+	font-size:calc(.8vw + .8vh);
+}
+
+#updateViewer ul{
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	top: 15%;
+	left: 6%;
+}
+
+#updateViewer li{
+	margin-bottom: 5%;
+	font-size:calc(.6vw + .6vh);
+}
+
+
+#updateViewer span{
+	color: rgb(180,180,180);
+	font-size:calc(.5vw + .5vh);
+	cursor: pointer;
+}
+
+/*inside content*/
+#updateDiv{
+	position: absolute;
+	top: 10%;
+	width: 100%;
+	height: 87%;
+	background-color: white;
+	display: none;
+}
+
+#updateDivTitle{
+	position: absolute;
+	height: 15%;
+	width: 100%;
+	background-color: rgb(0, 148, 255);
+}
+
+#updateDivTitle h1{
+	position: absolute;
+	color: white;
+	font-size:calc(1.2vw + 1.2vh);
+	font-family: arial black;
+	top: 25%;
+	left: 5%;
+}
+
+#updateDivTitle p{
+	position: absolute;
+	color: white;
+	font-size:calc(.6vw + .6vh);
+	font-family: arial;
+	font-family: arial;
+	top: 19%;
+	left: 5%;
+}
+
+#imgZoom{
+	position: absolute;
+	top: 25%;
+	left: 8%;
+	height: 40%;
+	max-width: 30%;
+}
+
+#updateDivContent a{
+	position: absolute;
+	bottom: 10%;
+	right: 8%;
+	display: none;
+}
+
+#updateDivContent #txtContent{
+	position: absolute;
+    top: 32%;
+    left: 45%;
+    width: 48%;
+    height: 55%;
+    overflow: auto;
+}
+
+#updateDiv span{
+	color: rgb(0, 148, 255);
+	position: absolute;
+	font-size: calc(4vw + 4vh);
+	cursor: pointer;
+	left: 5%;
+	top: 90%;
+}
+
+#imgViewer{
+	display: none;
+	position: absolute;
+	background-color: rgb(220,220,220);
+	height: 80%;
+	width: 80%;
+	left: 10%;
+	top: 10%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+#imgViewer img{
+	position: absolute;
+	top: 2%;
+	left: 2%;
+	height: 95%;
+	max-width: 95%;
+}
+
+#imgViewer h1{
+	position: absolute;
+	color: rgb(0, 148, 255);
+	z-index: 1000;
+	right: 2%;
+	top: 2%;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+#latestUpdates, #previousUpdates{
+	position: absolute;
+	height: 75%;
+	width: 65%;
+	top: 20%;
+	left : 5%;
+	display: none;
+}
+
+#latestUpdates h4, #previousUpdates h4{
+	position: absolute;
+	font-size: calc(1vw + 1vh);
+	top: 5%;
+	left: 5%;
+	color: gray;
+}
+
+#latestUpdates ul, #previousUpdates ul{
+	position: absolute;
+	top: 20%;
+	left: 10%;
+	margin: 0;
+	padding: 0;
+	list-style-type: none; 
+}
+
+#latestUpdates li, #previousUpdates li{
+	padding-bottom: 5%;
+	font-size:calc(.6vw + .6vh);
+}
+
+#latestUpdates span, #previousUpdates span{
+    color: rgb(180, 180, 180);
+    font-size: calc(.5vw + .5vh);
+    cursor: pointer;
+}
+
+#latestUpdates a, #previousUpdates a{
+    text-decoration: none;
+    color: black;
+}
+
+#latestUpdates a:hover, #previousUpdates a:hover {
+    text-decoration: underline;
+    color: rgb(0, 148, 255);
+}
+
+#docsDate {
+    position: absolute;
+    color: gray;
+    top: 23%;
+    left: 45%;
+    font-size: calc(.6vh + .6vw);
+}
+
+#docsUser {
+    position: absolute;
+    left: 45%;
+    top: 25%;
+    color: gray;
+    font-size: calc(.6vh + .6vw);
+}

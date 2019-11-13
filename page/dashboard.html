@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>United Rentals Inc - Dashboard</title>
+		<meta http-equiv="x-ua-compatible" content="IE=10"/>
+		<link rel="stylesheet" type="text/css" href="../css/dashboard.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/all.css"/>
+	</head>
+	
+	<body onload="pageOnLoad(),onLoadPage()">
+		<div id="mainDiv">
+			<div id="upDiv">
+				<img id="logo" src="../img/main/exllogo.png"/>
+				<a href="..\index.html"><p id="menuHome"><i class="fas fa-home"></i>  Home</p></a>
+				<a href="..\page\dashboard.html""><p id="menuDashboard"><i class="fas fa-chart-line"></i>  Dashboard</p></a>
+				<a href="#" id="menuUpload" onmouseover="showUploadMnu()"><p><i class="fas fa-upload"></i> Upload</p></a>
+			</div>
+			<p id="uploadArrow">&#9650;</p>
+			<div id="uploadMenu" onmouseleave="hideUploadMnu(this)">
+				<ul>
+					<a href=".\uploadTraining.html"><li>Training Manual</li></a>
+					<a href=".\uploadUpdates.html"><li>Daily Updates</li></a>
+				</ul>
+			</div>
+			<div id="containDiv">
+				<div id="headDiv">
+					<p>PAGE LOG DETAILS</p>
+					<h1>MAIN DASHBOARD</h1>
+				</div>
+				<div id="mainDashboard">
+					<div id="mainGraph">
+						<!--<input id="monthData" type="button" value="MONTHLY">
+						<input id="weekData" type="button" value="WEEKLY">-->
+						<div id="selectionHolder">
+							<select onchange="monthChange(this.value)">
+								<option value="">Select Month</option>
+							</select>
+						</div>
+						<canvas id="lineGraph"></canvas>
+					</div>
+					<div id="mainTop10">
+						<div id="updatesTop5">
+							
+						</div>
+					</div>
+					<div id="summaryVisit">
+						<p id="trainingTxt">TRAINING</p>
+						<div id="trainCanvas">
+							<canvas id="training"></canvas>
+						</div>
+						<p id="updatesTxt">UPDATES</p>
+						<div id="updateCanvas">
+							<canvas id="updates"></canvas>
+						</div>
+						<div id="legend">
+							<br>
+							This page shows the graphical representation of the tool usage.
+							<br>
+							<br>
+							Above, we have the line graph showing the number of user on a daily basis. We also have the <em>Most Visited Modules</em> on the right,
+							which we list down the top 10 modules. On the left, we have the graph showning which modules are most visited.
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="footDiv">
+			</div>
+		</div>
+		<script type="text/javascript" src="../docs/updates.txt"></script>
+		<script type="text/javascript" src="../js/main.txt"></script>
+		<script type="text/javascript" src="../js/dashboard.txt"></script>
+	</body>
+</html>

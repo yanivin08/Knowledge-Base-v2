@@ -1,0 +1,198 @@
+var category = document.getElementById('categoryList'),
+	month = document.getElementById('monthList'),
+	day = document.getElementById('dayList'),
+	year = document.getElementById('yearList'),
+	updateTitle = document.getElementById('upd8Title'),
+	updateCategory = document.getElementById('upd8Category').getElementsByTagName('select')[0],
+	updateEmp = document.getElementById('upd8EmpID'),
+	updateMonth = document.getElementById('upd8Month').getElementsByTagName('select')[0],
+	updateDay = document.getElementById('upd8Day').getElementsByTagName('select')[0],
+	updateYear = document.getElementById('upd8Year').getElementsByTagName('select')[0],
+	updateDocs = document.getElementById('upd8Text'),
+	updateImg = document.getElementById('upd8Img').getElementsByTagName('input')[0],
+	updateFile = document.getElementById('upd8File').getElementsByTagName('input')[0],
+	err = document.getElementById('errorMsg'),
+	msg = document.getElementById('msgBx').getElementsByTagName('span')[0];
+	
+var editTxt;
+
+var svgNS = 'http://www.w3.org/2000/svg';
+
+function onLoad(){
+	
+	var id=checkUser();
+	
+	var srcPath = document.getElementsByTagName('script')[0].src,
+		docPath = srcPath.substring(0,srcPath.lastIndexOf("/"));
+		docPath = docPath.replaceAll("%20"," ").substring(filePathIndex(docPath),docPath.length);
+		
+	var fso = new ActiveXObject("Scripting.FileSystemObject");
+	
+	var txt = fso.OpenTextFile(docPath + "/edit/" + id + ".ed", 1);
+		editTxt = JSON.parse(txt.readAll());
+		txt.Close();
+	
+	var editMonth = editTxt.date.split(" ")[0],
+		editDay = editTxt.date.split(" ")[1],
+		editYear = editTxt.date.split(" ")[2];
+		
+		editDay = editDay.substring(0,editDay.length - 1);
+		
+	data.map(function(x){
+		if(x.title == editTxt.title && x.date == editTxt.date && x.category == editTxt.category && x.module == editTxt.module){
+			updateTitle.value = x.title;
+			updateCategory.value = x.category;
+			updateEmp.value = id;
+			updateMonth.value = editMonth;
+			updateDay.value = editDay;
+			updateYear.value = editYear;
+			if(x.imgpath.substring(x.imgpath.lastIndexOf('/') + 1) != 'default.png'){
+				document.getElementById('img').innerHTML = x.imgpath.substring(x.imgpath.lastIndexOf('/') + 1) + "<b id='removeImg' onclick='removeImg()'> x</b>";
+			}
+			
+			if(x.filepath != 'none'){
+				document.getElementById('file').innerHTML = x.filepath.substring(x.filepath.lastIndexOf('/') + 1) + "<b id='removeImg' onclick='removeFile()'> x</b>";
+			}
+			
+			updateDocs.innerHTML = readFile(src + x.path);
+		}
+	});
+
+}
+
+function exec(cmd){
+	document.execCommand(cmd, false, null);
+}
+	
+function removeImg(){
+	document.getElementById('upd8Img').getElementsByTagName('input')[0].value = ""
+	document.getElementById('img').innerHTML = "";
+}
+
+function getImg(){
+	var filePath = document.getElementById('upd8Img').getElementsByTagName('input')[0].value,
+		fileName = filePath.substring(filePath.lastIndexOf("\\")+1,filePath.length),
+		fileShow = document.getElementById('img');
+		
+	fileShow.innerHTML = fileName + "<b id='removeImg' onclick='removeImg()'> x</b>";
+}
+
+
+function removeFile(){
+	document.getElementById('upd8File').getElementsByTagName('input')[0].value = ""
+	document.getElementById('file').innerHTML = "";
+}
+
+function getFile(){
+	var filePath = document.getElementById('upd8File').getElementsByTagName('input')[0].value,
+		fileName = filePath.substring(filePath.lastIndexOf("\\")+1,filePath.length),
+		fileShow = document.getElementById('file');
+		
+	fileShow.innerHTML = fileName + "<b id='removeImg' onclick='removeFile()'> x</b>";
+}
+
+function hideError(){
+	var err = document.getElementById('errorMsg');
+		err.style.display = "none";
+		err.style.opacity = "0";
+}
+
+function updateModule(){
+	if(updateTitle.value != "" && updateCategory.value != "" && updateEmp.value != "" && updateMonth.value != "" && updateDay.value != "" &&
+		updateYear.value != "" && updateDocs.innerHTML != ""){
+		var id = checkUser();
+		
+		if(id == updateEmp.value){
+			if(approveId.indexOf(id) != -1){	
+					
+					data.map(function(x){
+						if(x.title == editTxt.title && x.date == editTxt.date && x.category == editTxt.category && x.module == editTxt.module){
+							var updatedImg = ""; updatedFle = "";
+							
+							var src = document.getElementsByTagName('script')[0].src,
+								docPath = src.substring(0,path.lastIndexOf("/"));
+								docPath = docPath.replaceAll("%20"," ").substring(filePathIndex(docPath),docPath.length);
+								
+							var	imgPath = docPath.substring(0,docPath.lastIndexOf("/")) + "/img/",
+								filePath = docPath.substring(0,docPath.lastIndexOf("/")) + "/attach/",
+								fso = new ActiveXObject("Scripting.FileSystemObject");
+							
+							
+							if(document.getElementById('img').innerHTML != ""){
+								if(x.imgpath.substring(x.imgpath.lastIndexOf('/') + 1) == document.getElementById('img').childNodes[0].textContent){
+									updatedImg = x.imgpath;
+								}else{
+									var elem = document.getElementById('upd8Img').getElementsByTagName('input')[0],
+										orig = elem.value.replaceAll("\\","/"),
+										fileExt = orig.substring(orig.lastIndexOf("."),orig.length),
+										dest = imgPath + "updates/",
+										imgName = updateTitle.value + "_" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value + fileExt;
+										fso.CopyFile(orig, dest + imgName, false); /*copy from orig to dest*/
+										updatedImg = "img/updates/" + imgName;
+								}
+							}else{
+								updatedImg = "img/main/default.png"
+							}
+							
+							if(document.getElementById('file').innerHTML != ""){
+								if(x.filepath.substring(x.filepath.lastIndexOf('/') + 1) != document.getElementById('file').childNodes[0].textContent){
+									var elem = document.getElementById('upd8File').getElementsByTagName('input')[0],
+										orig = elem.value.replaceAll("\\","/"),
+										fileExt = orig.substring(orig.lastIndexOf("."),orig.length),
+										dest = filePath + "updates/",
+										fileName = updateTitle.value + "_" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value + fileExt;
+										fso.CopyFile(orig, dest + fileName, false); /*copy from orig to dest*/
+										updatedFle = "attach/updates/" + fileName;
+								}else{
+									updatedFle = x.filepath;
+								}
+							}else{
+								updatedFle = "none";
+							}
+							
+							//update your text file
+							var txtpath = (src.substring(filePathIndex(src),src.lastIndexOf("/")) + x.path).replaceAll("%20"," ");
+							var	txtEdit = fso.OpenTextFile(txtpath,2);
+								txtEdit.writeLine(updateDocs.innerHTML);
+								txtEdit.close();
+							
+								
+							//update the JSON file
+							data.forEach(function(k){
+								if(k.title == editTxt.title && k.date == editTxt.date && k.module == editTxt.module && k.category == editTxt.category){
+									k.title = updateTitle.value;
+									k.category = updateCategory.value;
+									k.date = updateMonth.value + " " + updateDay.value + ", " + updateYear.value;
+									k.imgpath = updatedImg;
+									k.filepath = updatedFle;
+									k.empid = updateEmp.value;
+								}
+							});
+							
+							var jsonPath = docPath + "/updates.txt",
+								jsonWrite = fso.OpenTextFile(jsonPath, 2);
+								jsonWrite.WriteLine(JSON.stringify(data));
+								jsonWrite.Close();		
+						}
+					});
+					
+					alert("Module has been updated!");
+					window.close();
+					
+			}else{
+				msg.innerText = "You are not authorized to upload and amend any updates in this tool."
+				err.style.display = "block";
+				err.style.opacity = "1";
+			}
+		}else{
+			msg.innerText = "Seems like you are trying to use other Employee ID, please try again."
+			err.style.display = "block";
+			err.style.opacity = "1";
+		}								
+	}else{
+		msg.innerText = "Please fill up all required field before uploading the form"
+		err.style.display = "block";
+		err.style.opacity = "1";		
+	}
+
+}

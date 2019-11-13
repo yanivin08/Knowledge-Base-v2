@@ -1,0 +1,32 @@
+var shapeTools = [
+					{
+						shape: "Pointer",
+						name: "Selector",
+						active: true
+					},
+					{
+						shape: "Oval",
+						name: "Terminator",
+						active: false
+					},
+					{
+						shape: "Rectangle",
+						name: "Process",
+						active: false
+					}, 
+					{
+						shape: "Diamond",
+						name: "Conditional",
+						active: false
+					}, 
+					{
+						shape: "Arrow",
+						name: "Line",
+						active: false
+					}/*,
+					{
+						shape: "Arrows",
+						name: "Lines",
+						active: false
+					},*/					
+				];

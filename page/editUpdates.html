@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>United Rentals Inc - Edit</title>
+		<meta http-equiv="x-ua-compatible" content="IE=10"/>
+		<link rel="stylesheet" type="text/css" href="../css/uploadUpd8.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/all.css"/>
+	</head>
+	<body onload="pageOnload(),onLoad()">
+		<div id="mainDiv">
+			<div id="upDiv">
+				<img id="logo" src="../img/main/exllogo.png"/>
+				<a href="..\index.html"><p id="menuHome"><i class="fas fa-home"></i>  Home</p></a>
+				<a href="..\page\dashboard.html""><p id="menuDashboard"><i class="fas fa-chart-line"></i>  Dashboard</p></a>
+				<a href="#" id="menuUpload" onmouseover="showUploadMnu()"><p><i class="fas fa-upload"></i> Upload</p></a>
+			</div>
+			<p id="uploadArrow">&#9650;</p>
+			<div id="uploadMenu" onmouseleave="hideUploadMnu(this)">
+				<ul>
+					<a href=".\uploadTraining.html"><li>Training Manual</li></a>
+					<a href=".\uploadUpdates.html"><li>Daily Updates</li></a>
+				</ul>
+			</div>
+			<div id="uploadDiv">
+				<div id="uploadHead">
+					<p>EDIT</p>
+					<h1>DAILY UPDATES</h1>
+				</div>
+				<div id="uploadDetails">
+					<input type="text" id="upd8Title" placeholder="Title">
+					<div id="upd8Category">
+						<select>
+							<option value="">Category</option>
+							<option value="Open Scan">Open Scan</option>
+							<option value="Cash Applications">Cash Applications</option>
+							<option value="Commodity">Commodity</option>
+							<option value="ROA">ROA</option>
+							<option value="Centralized AP">Centralized AP</option>
+							<option value="AP Catalyst">AP Catalyst</option>
+							<option value="Total Control AP">Total Control AP</option>
+							<option value="Vendor Maintenance">Vendor Maintenance</option>
+							<option value="Remarks">Remarks</option>
+							<option value="Concur">Concur</option>
+						</select>
+					</div>
+					<input type="text" id="upd8EmpID" placeholder="Employee ID">
+					<div id="upd8Month">
+						<select>
+							<option value="">Month</option>
+							<option value="January">January</option>
+							<option value="February">February</option>
+							<option value="March">March</option>
+							<option value="April">April</option>
+							<option value="May">May</option>
+							<option value="June">June</option>
+							<option value="July">July</option>
+							<option value="August">August</option>
+							<option value="September">September</option>
+							<option value="October">October</option>
+							<option value="November">November</option>
+							<option value="December">December</option>
+						</select>
+					</div>
+					<div id="upd8Day">
+						<select>
+							<option value="">Day</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="11">11</option>
+							<option value="12">12</option>
+							<option value="13">13</option>
+							<option value="14">14</option>
+							<option value="15">15</option>
+							<option value="16">16</option>
+							<option value="17">17</option>
+							<option value="18">18</option>
+							<option value="19">19</option>
+							<option value="20">20</option>
+							<option value="21">21</option>
+							<option value="22">22</option>
+							<option value="23">23</option>
+							<option value="24">24</option>
+							<option value="25">25</option>
+							<option value="26">26</option>
+							<option value="27">27</option>
+							<option value="28">28</option>
+							<option value="29">29</option>
+							<option value="30">30</option>
+							<option value="31">31</option>
+						</select>
+					</div>
+					<div id="upd8Year">
+						<select>
+							<option value="">Year</option>
+							<option value="2019">2019</option>
+							<option value="2020">2020</option>
+							<option value="2021">2021</option>
+							<option value="2022">2022</option>
+							<option value="2023">2023</option>
+							<option value="2024">2024</option>
+							<option value="2025">2025</option>
+						</select>
+					</div>
+					<label id="upd8Img">UPLOAD IMAGE<input type="file" accept="image/*" placeholder="Image Here" onchange="getImg()"/></label>
+					<b><span id="img"></span></b>
+					<label id="upd8File">UPLOAD FILE<input type="file" placeholder="Image Here" onchange="getFile()"/></label>
+					<b><span id="file"></span></b>
+					<div id="txtEdit">
+						<button onclick="exec('bold')"><i class="fa fa-bold"></i></button>
+						<button onclick="exec('italic')"><i class="fas fa-italic"></i></button>
+						<button onclick="exec('underline')"><i class="fas fa-underline"></i></button>
+						<button onclick="exec('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+						<button onclick="exec('insertUnorderedList')"><i class="fas fa-list"></i></button>
+						<button onclick="exec('indent')"><i class="fas fa-indent"></i></button>
+						<button onclick="exec('outdent')"><i class="fas fa-outdent"></i></button>
+					</div>
+					<div id="upd8Text" contenteditable="true"></div>
+					<input type="submit" id="clearUpd8" value="CLEAR" onclick="clearField()">
+					<input type="submit" id="uploadUpd8" value="UPDATE" onclick="updateModule()">
+				</div>
+				<div id="otherLinks">
+					<h1>OTHER LINKS</h1>
+					<ul>
+						<li><b>&#9632; </b><a href=".\uploadTraining.html">Upload Training</a></li>
+						<li><b>&#9632; </b><a href=".\training.html">View Training Manual</a></li>
+						<li><b>&#9632; </b><a href=".\update.html">View Daily Updates</a></li>
+						<li><b>&#9632; </b><a href="#">About Us</a></li>
+					</ul>
+				</div>
+				<div id="errorMsg">
+					<div id="msgBx">
+						<div>Error</div>
+						<span>Please fill up all the requirgb(105,191,255) field before uploading the form</span>
+						<input id="errNote" type="submit" value="OK" onclick="hideError()">
+					</div>
+				</div>
+			</div>
+			<div id="footDiv">
+			</div>
+		</div>
+		<script type="text/javascript" src="../docs/updates.txt"></script>
+		<script type="text/javascript" src="../js/main.txt"></script>
+		<script type="text/javascript" src="../js/editUpd8.txt"></script>
+	</body>
+</html>

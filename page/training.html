@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>United Rentals Inc - Training</title>
+		<meta http-equiv="x-ua-compatible" content="IE=10"/>
+		<link rel="stylesheet" type="text/css" href="../css/training.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/all.css"/>
+	</head>
+	
+	<body onload="pageOnload()">
+		<div id="mainDiv">
+			<div id="upDiv">
+				<img id="logo" src="../img/main/exllogo.png"/>
+				<a href="..\index.html"><p id="menuHome"><i class="fas fa-home"></i>  Home</p></a>
+				<a href="..\page\dashboard.html""><p id="menuDashboard"><i class="fas fa-chart-line"></i>  Dashboard</p></a>
+				<a href="#" id="menuUpload" onmouseover="showUploadMnu()"><p><i class="fas fa-upload"></i> Upload</p></a>
+			</div>
+			<p id="uploadArrow">&#9650;</p>
+			<div id="uploadMenu" onmouseleave="hideUploadMnu(this)">
+				<ul>
+					<a href=".\uploadTraining.html"><li>Training Manual</li></a>
+					<a href=".\uploadUpdates.html"><li>Daily Updates</li></a>
+				<ul>
+			</div>
+			<div id="trainingDiv">
+				<div id="firstCol">
+					<div id="openScanDiv" class="firstRow">
+						<h1>OPEN SCAN</h1>
+						<img src="../img/main/openscan.png"/>
+						<p>Read Open Key, Electronics and Scotia related topics.</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('Open Scan')">
+					</div>
+					<div id="cashDiv" class="secRow">
+						<h1>CASH APPLICATIONS</h1>
+						<img src="../img/main/cashapp.png"/>
+						<p>Learn all Bad Debt Write Off, CC Remit, CCR Request and Chargeback and Misapplied</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('Cash Applications')">
+					</div>		
+				</div>
+				<div id="secCol">
+					<div id="roaDiv" class="firstRow">
+						<h1>ROA</h1>
+						<img src="../img/main/roa.png"/>
+						<p>Be familiarized with PJ Adjustment, Unidentified Payments, Debit ROA and Non AR</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('ROA')">
+					</div>
+					<div id="centralDiv" class="secRow">
+						<h1>CENTRALIZED AP</h1>
+						<img src="../img/main/central.png"/>
+						<p>Knowing how to process orders in User Maintenance Form and Payment Run</p>
+						<input id="" type="submit" value="READ MORE  &#8594;"onclick="viewModule('Centralized AP')">
+					</div>			
+				</div>
+				<div id="thirdCol">
+					<div id="apcatDiv" class="firstRow">
+						<h1>AP CATALYST</h1>
+						<img src="../img/main/ap.png"/>
+						<p>Familiarized with Purchase Orders, Credit Memo, Utilities and Billing and Online Check</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('AP Catalyst')">
+					</div>						
+					<div id="ttlcntrlDiv" class="secRow">
+						<h1>TOTAL CONTROL AP</h1>
+						<img src="../img/main/control.png"/>
+						<p>Learn to process Invoice Completion to Pay Vendor, Customer Billing and Closing of Contract</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('Total Control AP')">
+					</div>	
+				</div>
+				<div id="fourtCol">
+					<div id="vendorDiv" class="firstRow">
+						<h1>VENDOR MAINTENANCE</h1>
+						<img src="../img/main/vendor.png"/>
+						<p>Knowledge in Regular Catalyst, VM Catalyst, Online Forms, Invoice Completion and others.</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('Vendor Maintenance')">
+					</div>
+					<div id="concurDiv" class="secRow">
+						<h1>CONCUR</h1>
+						<img src="../img/main/concur.png"/>
+						<p>Handling customer applications, terminations and deactivations.</p>
+						<input id="" type="submit" value="READ MORE  &#8594;" onclick="viewModule('Concur')">
+					</div>
+				</div>
+			</div>
+			<div id="footDiv">
+			</div>
+		</div>
+		<div id="trainingDocs">
+			<div id="trainingTitle">
+				<p>TRAINING MODULE</p>
+				<h1></h1>
+			</div>
+			<div id="trainingContent">
+				<h3>Select the title below</h3>
+				<ul></ul>
+				<span id="goBackId" onclick="gobackMain()">&#171;</span>
+			</div>
+			<div id="trainingLinks">
+				<h1>OTHER MODULE</h1>
+				<ul>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Open Scan</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Cash Applications</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">ROA</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Centralized AP</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Bill Class</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">AP Catalyst</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Total Control AP</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Vendor Maintenance</a></li>
+					<li><b>&#9632; </b><a href="#" onclick="viewModule(this.innerText)">Concur</a></li>
+				</ul>
+			</div>
+		</div>
+		<div id="trainViewer">
+			<div id="viewerHeader">
+				<p></p>
+				<h1></h1>
+			</div>	
+			<div id="viewerContent">
+				<div id="pContent">
+					<ol id="contentList"></ol> 	
+				</div>
+				<div id="pButton">
+					<button id="nextButton" onclick="stepViewer('training')"><i class="far fa-arrow-alt-circle-down"></i></button>
+				</div>
+			</div>
+			<span onclick="goback()">&#171;</span>
+		</div>
+		<script type="text/javascript" src="../docs/updates.txt"></script>
+		<script type="text/javascript" src="../js/main.txt"></script>
+		<script type="text/javascript" src="../js/training.txt"></script>
+	</body>
+</html>

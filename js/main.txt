@@ -1,0 +1,669 @@
+var scripts, path, src, img, approveId, data = [];
+	
+function pageOnload(){
+	
+	scripts = document.getElementsByTagName("script"),
+	path = scripts[0].src, /*getting the file path*/
+	src = path.substring(0,path.lastIndexOf("/")),
+	img = src.substring(0,path.lastIndexOf("/")),
+	approveId = ['76560','mtolentino','nmarmita','jeseriosa','npascua','ralon','aycasas']
+	data = JSON.parse(readFile(path));
+	
+}
+
+var search = document.getElementById("searchRslt"),
+	searchArrow = document.getElementById('uploadArrow'),
+	searchField = document.getElementById("searchField");
+
+var nextInd, currInd, processMap = [], steps;
+
+/*css related functions*/
+function searchDta(vlue){
+	if(vlue == ""){
+		search.style.display = "none";
+	}else{
+		search.style.display = "block";
+	}
+}
+
+function hideElem(){
+	search.style.display = "none";
+}
+
+function showUploadMnu(){
+	searchArrow.style.display = "block";
+	document.getElementById('uploadMenu').style.display ="block";
+}
+
+function hideUploadMnu(elem){
+	elem.style.display ="none";
+	searchArrow.style.display = "none";
+}
+/*---------------------*/
+
+/*auto search words on key up*/
+if(searchField != undefined || searchField != null){
+	var keyWord = "", result = "";
+	/*prevent from doing other things when entered*/
+	searchField.addEventListener('keydown',function(x){
+		if(event.keyCode === 13){
+			x.preventDefault();
+			/*viewSearch(result);*/	
+		}
+	});
+	
+	searchField.addEventListener('keyup',function(x){
+		/*create regexp base on the input*/
+		keyWord = new RegExp(searchField.value.split('').join('\\w*').replace(/\W/, ""), 'i');/*.replace(/[;\\/:*?\"<>|&']/,"");*/
+		/*return a new set of array for the match word*/
+		result = data.filter(function(x){
+					if(x.title.match(keyWord) || x.category.match(keyWord)){
+						return x;
+					}
+				});
+		if(event.keyCode === 13){
+			x.preventDefault();
+			viewSearch(result.reverse());
+		}
+		/*view the results*/
+		addSearchResult(result.reverse());
+	});
+}
+
+/*create html elements to view the results*/
+function addSearchResult(arr){
+	if(searchField != ""){
+		var viewer = document.getElementById('searchRslt').getElementsByTagName('ul')[0], //<-- insert here all the results modules
+		title = "";	
+		viewer.innerHTML = "";
+		if(arr != ""){ //loop to all result array
+			var arrs = arr.sort(function(a,b){
+				if (new Date(a.date) < new Date(b.date)) return 1;
+				if (new Date(a.date) > new Date(b.date)) return -1;
+				return 0;
+			});
+			arrs.forEach(function(x){
+				title = title + "<a href='#' onclick=\"viewerUpdates('" + x.path +"','" + x.imgpath + "','" + x.title + "','" + x.category + "','" + x.filepath + "','" + x.date + "','" + x.empid + "','" + x.module + "')\"><li >" + x.title + "</li></a>";
+			});
+			viewer.innerHTML = title; //this is where we put the new html content
+		}
+	}
+}
+
+/*function that will create a page that shows all the list of topics base on search keyword*/
+//call when user press entered in search bar
+function viewSearch(arr){
+	if(searchField != ""){
+		var content = "",
+			listContent = document.getElementById('listBody'),
+			fso = new ActiveXObject("Scripting.FileSystemObject"),
+			text, path, filePath;
+			
+		document.getElementById('midDiv').style.top = "0%";
+		document.getElementById('listResult').style.top = "25%";
+		hideElem();
+		/*get all the sets of array*/
+		var arrs = arr.sort(function(a,b){
+			if (new Date(a.date) < new Date(b.date)) return 1;
+			if (new Date(a.date) > new Date(b.date)) return -1;
+			return 0;
+		});
+		arrs.forEach(function(x){
+			path = (src.substring(filePathIndex(src)) + x.path).replaceAll("%20"," ");
+			filePath = fso.OpenTextFile(path,1);
+			text = filePath.ReadAll();
+			if(x.module == "training"){
+				var tmpArr = [];
+				tmpArr = JSON.parse(text);
+				text = tmpArr[1].text.substring(0,200).replace(/<(.|\n)*?>/g, '') + "... more";
+			}else{
+				text = text.substring(0,200).replace(/<(.|\n)*?>/g, '') + "... more";
+			}
+			filePath.Close();
+			/*viewer*/
+			updte = new Date(x.date);
+			updte = updte.toLocaleDateString("en-au", {year: "numeric", month: "short",day: "numeric"}).replace(/\s/g,' ');
+			content += "<div class=\"list\"><h3><a href=\"#\" onclick=\"viewerUpdates('" + x.path +"','" + x.imgpath +"','" + x.title + "','" + x.category + "','" + x.filepath + "','" + x.date + "','" + x.empid + "','" + x.module + "')\">" + x.title + "</a></h3><h6>" + x.category.toUpperCase() + " | " + updte + "</h6><span>" + text + "</span></div>";
+		});
+		
+		listContent.innerHTML = content;
+	}
+}
+
+/*viwer of the chosen updates base on the list of topics*/
+//calls when user pick updates base on the results
+function viewerUpdates(xpath,img,title,category,file,dte,nme,module){
+	hideElem();
+	
+	var viewDiv = document.getElementById('searchViewer'),
+		header = document.getElementById('searchHeader'),
+		titleHead = header.getElementsByTagName('p')[0],
+		titleMain = header.getElementsByTagName('h1')[0],
+		contentImg = document.getElementById('searchContent').getElementsByTagName('img')[0],
+		contentTxt = document.getElementById('txtContent'),
+		fso = new ActiveXObject("Scripting.FileSystemObject"),
+		attach = document.getElementById('searchContent').getElementsByTagName('a')[0],
+		docsDate = document.getElementById('docsDate'),
+		docsUser = document.getElementById('docsUser'),
+		nxtButton = document.getElementById('nextButton'),
+		text, txtpath, filePath;
+		
+		titleMain.innerText = title.toUpperCase();
+		titleHead.innerText = category.toUpperCase();
+	
+		txtpath = (src.substring(filePathIndex(src)) + xpath).replaceAll("%20"," ");
+		
+		viewDiv.style.display = "block";
+		viewDiv.style.opacity = "1";
+	
+	if(module == "updates"){
+		document.getElementById('searchUpdate').style.display = "block";
+		document.getElementById('viewerContent').style.display = "none";
+		filePath = fso.OpenTextFile(txtpath,1);
+		text = filePath.ReadAll();
+		filePath.Close();
+		
+		docsDate.textContent = "Date: " + dte;
+		docsUser.textContent = "Uploader: " + nme;
+	
+		contentImg.src = img;
+		contentTxt.innerHTML = text;
+		
+		if(file!="none"){
+			attach.href = file;
+			attach.style.display = "block";
+		}
+		
+	}else{
+		document.getElementById('searchUpdate').style.display = "none";
+		document.getElementById('viewerContent').style.display = "block";
+		document.getElementById('contentList').innerHTML = "";
+		document.getElementById('pButton').style.display = "table";
+		nxtButton.innerHTML += "<br/><p>Click to start</p>";
+		
+		filePath = fso.OpenTextFile(txtpath,1);
+		text = filePath.ReadAll();
+		filePath.Close();
+		
+		currInd = 0;
+		steps = 0;
+		
+		processMap = JSON.parse(text);
+		
+	}
+	
+	counterModules(path, title,category);
+}
+
+/*other functions*/
+
+function back(){
+	var viewDiv = document.getElementById('searchViewer');
+	document.getElementById("imgViewer").style.display = "none";
+	document.getElementById('searchContent').getElementsByTagName('a')[0].style.display = "none";
+	viewDiv.style.display = "none";
+	viewDiv.style.opacity = "0";
+}
+
+
+function hideDiv(){
+	document.getElementById('midDiv').style.top = "10%";
+	document.getElementById('listResult').style.top = "100%";
+}
+/*---------------*/
+
+function closeImg(){
+	document.getElementById("imgViewer").style.display = "none";
+}
+
+function zoomImg(){
+	document.getElementById("imgViewer").style.display = "block";
+	var imgView = document.getElementById("imgViewer").getElementsByTagName("img")[0];
+	imgView.src = document.getElementById("imgZoom").src;
+}
+
+//this is where we check user info.
+function checkUser(){
+	var wshshell= new ActiveXObject("wscript.shell");
+	var username= wshshell.ExpandEnvironmentStrings("%username%");
+	//username = username.match(/\d+/);
+	//return username[0];
+	return username[0];
+}
+
+/*replaceAll by split and join*/
+String.prototype.replaceAll = function(search, replacement) {
+	var target = this;
+    return target.split(search).join(replacement);
+};
+
+
+function deleteUpdates(title,date,txtPath,imgPath,flePath){
+	var id=checkUser(),
+		deleteFile = false;
+		date = date.split(' ');
+	var month = date[0],
+		day = date[1].substring(0,date[1].length-1),
+		year = date[2];
+	
+	if(approveId.indexOf(id) != -1){
+		if(confirm("Are you sure you want to delete this item?")){
+		
+			var content = "", fso = new ActiveXObject("Scripting.FileSystemObject"),
+				src = document.getElementsByTagName('script')[0].src;
+				jsonPath = src.substring(filePathIndex(src),src.length).replaceAll("%20"," ");
+				readFile = fso.OpenTextFile(jsonPath,1,true);
+			var srcPath = jsonPath.substring(0,jsonPath.lastIndexOf('/') - 4);
+
+			data = data.filter(function(x){
+				var thisDate = month + " " + day + ", " + year;  
+				if(x.title != title || x.date != thisDate){
+					return x;
+				}
+			});
+			
+			
+			/*while(!readFile.AtEndOfStream){
+				var text = readFile.ReadLine();
+				if(text.indexOf(title) <= 0 && !text.indexOf(month) <= 0 && !text.indexOf(day) <= 0 && !text.indexOf(year) <= 0){
+					content += text + "\n";
+				}
+			}
+			
+			readFile.Close();*/
+			
+			var editFile = fso.OpenTextFile(jsonPath,2,true);
+			editFile.WriteLine(JSON.stringify(data));
+			editFile.Close();	
+			
+			fso.DeleteFile(txtPath.replaceAll("%20"," ").substring(filePathIndex(txtPath)));
+			if(imgPath.substring(imgPath.lastIndexOf('/') + 1) != 'default.png') fso.DeleteFile(srcPath + imgPath)
+			if(flePath != 'none') fso.DeleteFile(srcPath + flePath);
+			
+			alert("Updates successfully deleted!");
+			location.reload();
+		}
+	}else{
+		alert('You are not authorized to delete this updates!');
+	}
+}
+
+var slideIndex = 0;
+
+function slideUpdates(){
+	var slides = document.getElementsByClassName("slideContent");
+	
+	for(var i=0;i<slides.length;i++){
+		slides[i].style.display = "block"
+		slides[i].style.opacity = "1";
+		
+		slides[i].getElementsByTagName("h1")[0].style.opacity = "0";
+		slides[i].getElementsByTagName("span")[0].style.opacity = "0";
+		
+		slides[i].getElementsByTagName("h1")[0].style.left = "-60%";
+		slides[i].getElementsByTagName("span")[0].style.right = "-70%";
+	}
+	slideIndex++;
+	if(slideIndex > slides.length){ slideIndex = 1}
+	
+	//slides[slideIndex-1].style.display = "block";
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.left = "10%";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.right = "10%";
+	
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.opacity = "1";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.opacity = "1";
+	//slides[slideIndex-1].style.opacity = "1";
+	setTimeout(slideUpdates,10000);
+}
+
+
+function filePathIndex(p){
+	if(p.indexOf('fs1')==-1){
+		return 8;
+	}else{
+		return 5;
+	}
+}
+
+
+function getLatestUpdates(){
+	
+	var fso = new ActiveXObject("Scripting.FileSystemObject"),
+		newUpdatesContent = "";
+	
+	var tempArr = data.filter(function(x){
+				if(x.module == "updates"){
+					return x;
+				}
+			  });
+	
+	if(tempArr.length > 0){
+		var newArr = tempArr.sort(function(a,b){
+			if (new Date(a.date) < new Date(b.date)) return 1;
+			if (new Date(a.date) > new Date(b.date)) return -1;
+			return 0;
+		});
+		
+		var latestDate = newArr[0].date;
+		latestArr = newArr.filter(function(x){
+			if(x.date == latestDate){
+				return x;
+			}
+		});
+		
+		for(var i=0;i<latestArr.length;i++){
+			var newTitle = latestArr[i].title.toUpperCase(),
+				slideNumber = i + 1;
+			var newPath = (src.substring(filePathIndex(src)) + latestArr[i].path).replaceAll("%20"," ");
+			var	readFile = fso.OpenTextFile(newPath,1),
+				newContent = readFile.ReadAll().substring(0,200);
+				readFile.Close();
+				
+				newUpdatesContent += "<div class='slideContent' id='slide" + slideNumber + "'>" +
+										"<h1>" + newTitle + "</h1>" +
+										"<span>" + newContent.replace(/<(.|\n)*?>/g, ' ') + ".... <a  href=\"#\" onclick=\"viewerUpdates('" + latestArr[i].path +"','" + latestArr[i].imgpath +"','" + latestArr[i].title + "','" + latestArr[i].category + "','" + latestArr[i].filepath + "','" + latestArr[i].date + "','" + latestArr[i].empid + "','" + latestArr[i].module + "')\"><em>more</em></a></span>" +
+									 "</div>"
+		}
+		
+		document.getElementById('slider').innerHTML = newUpdatesContent;
+		setTimeout(slideUpdates,1500);
+	}
+}
+
+function nextUpdates(){
+	var slides = document.getElementsByClassName("slideContent");
+		
+	for(var i=0;i<slides.length;i++){
+		slides[i].style.display = "block"
+		slides[i].style.opacity = "1";
+		
+		slides[i].getElementsByTagName("h1")[0].style.opacity = "0";
+		slides[i].getElementsByTagName("span")[0].style.opacity = "0";
+		
+		slides[i].getElementsByTagName("h1")[0].style.left = "-60%";
+		slides[i].getElementsByTagName("span")[0].style.right = "-70%";
+	}
+	
+	slideIndex++;
+	if(slideIndex > slides.length){ slideIndex = 1}
+	
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.left = "10%";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.right = "10%";
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.opacity = "1";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.opacity = "1";
+}
+
+function prevUpdates(){
+	var slides = document.getElementsByClassName("slideContent");
+	for(var i=0;i<slides.length;i++){
+		slides[i].style.display = "block"
+		slides[i].style.opacity = "1";
+		
+		slides[i].getElementsByTagName("h1")[0].style.opacity = "0";
+		slides[i].getElementsByTagName("span")[0].style.opacity = "0";
+		
+		slides[i].getElementsByTagName("h1")[0].style.left = "-60%";
+		slides[i].getElementsByTagName("span")[0].style.right = "-70%";
+	}
+	slideIndex--;
+	
+	if(slideIndex <= 0){ slideIndex = slides.length}
+	
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.left = "10%";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.right = "10%";
+	slides[slideIndex-1].getElementsByTagName("h1")[0].style.opacity = "1";
+	slides[slideIndex-1].getElementsByTagName("span")[0].style.opacity = "1";
+}
+
+//this would count the number of times an update was visited
+function counterModules(path, title,category){
+	
+	data.map(function(j){
+		if(j.title == title && j.category == category){
+			j.visit += 1;
+		}
+	});
+	
+		var src = document.getElementsByTagName("script")[0].src,
+			docPath = src.substring(filePathIndex(src),src.length).replaceAll("%20"," "),
+			fso = new ActiveXObject("Scripting.FileSystemObject");
+
+		var	jsonWrite = fso.OpenTextFile(docPath, 2);
+			//jsonWrite.WriteLine(newContent.trim()); //<-- made changes in the jason file\
+			jsonWrite.WriteLine(JSON.stringify(data));
+			jsonWrite.Close();
+}
+
+//creating cookies
+function setCookies(){
+	
+	var cookie = document.cookie,
+		cookieContent = [];
+	var wshshell= new ActiveXObject("wscript.shell"),
+		username= wshshell.ExpandEnvironmentStrings("%username%"),
+		date = new Date(),
+		exp = new Date(date.getFullYear(), date.getMonth()+1, 0);
+		//exp.setMonth(exp.getMonth() + 1);
+
+	if(cookie != ""){
+		cookie = cookie.split(";");	
+		cookie.forEach(function(a){
+			cookieContent.push(a.substring(a.indexOf("=")+1,a.length));
+		});
+		
+		var counter = parseInt(cookieContent[3]),
+			cookieDate = new Date(cookieContent[1]);
+
+		if(date.getMonth() == cookieDate.getMonth() && date.getDate() == cookieDate.getDate() && date.getYear() == cookieDate.getYear()){
+			document.cookie = "name=" + username + ";expires=" + exp.toUTCString();
+			document.cookie = "firstvisitdate=" + cookieDate.toUTCString() + ";expires=" + exp.toUTCString();
+			document.cookie = "lastvisitdate=" + date.toUTCString() + ";expires=" + exp.toUTCString();
+			document.cookie = "visit=" + counter + ";expires=" + exp.toUTCString();
+		}else{
+			//this is where we get the cookie data to check the number of visits
+			counter++;
+			
+			document.cookie = "name=" + username + ";expires=" + exp.toUTCString();
+			document.cookie = "firstvisitdate=" + date.toUTCString() + ";expires=" + exp.toUTCString();
+			document.cookie = "lastvisitdate=" + date.toUTCString() + ";expires=" + exp.toUTCString();
+			document.cookie = "visit=" + counter + ";expires=" + exp.toUTCString();
+			
+			cookieContent = [];
+			cookie = document.cookie;
+			cookie = cookie.split(";");	
+			cookie.forEach(function(a){
+				cookieContent.push(a.substring(a.indexOf("=")+1,a.length));
+			});
+			
+			addCookieRecords(cookieContent);
+		}
+		
+	}else{
+		document.cookie = "name=" + username + ";expires=" + exp.toUTCString();
+		document.cookie = "firstvisitdate=" + date.toUTCString() + ";expires=" + exp.toUTCString();
+		document.cookie = "lastvisitdate=" + date.toUTCString() + ";expires=" + exp.toUTCString();
+		document.cookie = "visit=1;expires=" + exp.toUTCString();
+		
+		cookieContent = [];
+		cookie = document.cookie;
+		cookie = cookie.split(";");	
+		cookie.forEach(function(a){
+			cookieContent.push(a.substring(a.indexOf("=")+1,a.length));
+		});
+		
+		addCookieRecords(cookieContent);
+	}
+}
+
+
+function addCookieRecords(arr){
+
+	var user = arr[0],
+		startDate = new Date(arr[1]),
+		endDate = new Date(arr[2]),
+		visit = parseInt(arr[3]);
+	
+	var sDate = startDate.getFullYear() + "-" + ('0' + startDate.getMonth()).slice(-2) + "-" + ('0' + startDate.getDate()).slice(-2) + " " + 
+				('0' + startDate.getHours()).slice(-2) + ":" + ('0' + startDate.getMinutes()).slice(-2) + ":" + ('0' + startDate.getSeconds()).slice(-2);
+	var eDate = endDate.getFullYear() + "-" + ('0' + endDate.getMonth()).slice(-2) + "-" + ('0' + endDate.getDate()).slice(-2) + " " + 
+				('0' + endDate.getHours()).slice(-2) + ":" + ('0' + endDate.getMinutes()).slice(-2) + ":" + ('0' + endDate.getSeconds()).slice(-2);
+		
+	var adConn = new ActiveXObject("ADODB.Connection"),
+		src = document.getElementsByTagName("script")[0].src.replaceAll("%20"," ");
+		src = src.substring(filePathIndex(src),src.lastIndexOf("/")+1) + "cookies/LogDetails.accdb";
+		
+	adConn.Open("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + src);
+	adConn.Execute("INSERT into visitLog values ('" + user + "','" + sDate + "','" + eDate + "','" + visit + "')");
+
+	adConn.Close();
+	
+}
+
+function stepViewer(pg){
+	
+	if(steps == 0){
+		document.getElementById('nextButton').removeChild(document.getElementById('nextButton').getElementsByTagName('p')[0]);
+		document.getElementById('nextButton').removeChild(document.getElementById('nextButton').getElementsByTagName('br')[0]);
+	}
+	
+	var pContent = document.getElementById('contentList'),
+		divContent = document.createElement('li');
+	
+	var nextID;
+	
+	if(processMap[currInd].type == "Conditional"){
+		var radioBtn = document.getElementsByName('boolean' + (steps));
+		if(radioBtn[0].checked){
+			nextID = processMap[currInd].connectedTo.yes;
+		}else if(radioBtn[1].checked){
+			nextID = processMap[currInd].connectedTo.no;
+		}else{
+			nextID = processMap[currInd].id;
+		}
+	}else{
+		nextID = processMap[currInd].connectedTo;
+	}
+	
+	nextInd = processMap.map(function(i){ return i.id }).indexOf(nextID);
+	steps += 1;
+	
+	if(processMap[nextInd].type != 'Conditional'){
+		var pText = document.createElement('p');
+		var img = document.createElement('image');
+		var fle = document.createElement('button');
+		
+		pText.innerHTML = processMap[nextInd].text;
+		
+		divContent.appendChild(pText);
+		
+		if(processMap[nextInd].image != "none"){
+			img.src = (pg == "home") ? processMap[nextInd].image : "../" + processMap[nextInd].image;
+			divContent.appendChild(img);
+		}
+		
+		if(processMap[nextInd].file != "none"){
+			fle.innerHTML = "<i class=\"fas fa-file-download\"></i> Attachment"
+			fle.setAttribute("onclick","window.location.href='" + src.substring(0,src.indexOf('/docs')) + processMap[nextInd].file + "'");
+			divContent.appendChild(fle);
+		}			
+	}else{
+		var pText = document.createElement('p'),
+			img = document.createElement('image'),
+			fle = document.createElement('button');
+			
+		pText.innerHTML = processMap[nextInd].text;
+		divContent.appendChild(pText);
+		
+		var radioYes = document.createElement('input'),
+			labelY = document.createElement('label'),
+			radioNo = document.createElement('input'),
+			labelN = document.createElement('label');
+			
+		radioYes.setAttribute('type','radio');
+		radioYes.setAttribute('name','boolean' + steps);
+		radioYes.setAttribute('value','Yes');
+		
+		radioNo.setAttribute('type','radio');
+		radioNo.setAttribute('name','boolean' + steps);
+		radioNo.setAttribute('value','No');
+		
+		labelY.setAttribute('class','radio');
+		labelY.appendChild(radioYes);
+		labelY.innerHTML += 'Yes<span></span>';
+		labelY.style.margin = '30px';
+		
+		labelN.setAttribute('class','radio');
+		labelN.appendChild(radioNo);
+		labelN.innerHTML += 'No<span></span>';
+		labelN.style.margin = '30px';
+		
+		divContent.appendChild(labelY);
+		divContent.appendChild(labelN);
+		
+		if(processMap[nextInd].image != "none"){
+			img.src = processMap[nextInd].image;
+			divContent.appendChild(img);
+		}
+		
+		if(processMap[nextInd].file != "none"){
+			fle.innerHTML = "<i class=\"fas fa-file-download\"></i> Attachment"
+			divContent.appendChild(fle);
+		}
+	
+	}
+	
+	currInd = nextInd;
+	pContent.appendChild(divContent);
+	
+	document.getElementById('pContent').scrollTop = document.getElementById('pContent').scrollHeight;
+	
+	if(processMap[currInd].connectedTo == "undefined"){
+		document.getElementById('pButton').style.display = "none"
+	}
+	
+}
+
+function editUpdates(a,b,c,d){
+	var id=checkUser();
+	
+	if(approveId.indexOf(id) != -1){	
+		var tempObj = {};
+		
+		tempObj.title = a;
+		tempObj.category = b;
+		tempObj.date = c;
+		tempObj.module = d;
+		
+		var srcPath = document.getElementsByTagName('script')[0].src,
+			docPath = src.substring(0,path.lastIndexOf("/"));
+			docPath = docPath.replaceAll("%20"," ").substring(filePathIndex(docPath),docPath.length);
+			
+		var fso = new ActiveXObject("Scripting.FileSystemObject");
+		
+		if(!fso.FileExists(docPath + "/edit/" + id + ".ed")){
+			var txt = fso.CreateTextFile(docPath + "/edit/" + id + ".ed", true);
+				txt.writeline(JSON.stringify(tempObj));
+				txt.Close();
+		}else{
+			var edittxt = fso.OpenTextFile(docPath + "/edit/" + id + ".ed", 2);
+				edittxt.writeline(JSON.stringify(tempObj));
+				edittxt.Close();
+		}
+		
+		(d == "updates") ? window.open(docPath.substring(0,docPath.lastIndexOf("/")) + "/page/editUpdates.html") : window.open(docPath.substring(0,docPath.lastIndexOf("/")) + "/page/editTraining.html")
+		
+	}else{
+		alert('You are not authorized to edit this updates!');
+	}
+	
+}
+
+/*get the content of a text file*/
+function readFile(p){
+	var fso = new ActiveXObject("Scripting.FileSystemObject"),
+		path = p.substring(filePathIndex(p),p.length).replaceAll("%20"," "),
+		filePath = fso.OpenTextFile(path,1),
+		content = filePath.ReadAll();
+		filePath.Close();
+		return content;
+}

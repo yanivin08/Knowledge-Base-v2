@@ -1,0 +1,526 @@
+body {
+	font-family: arial;
+	margin: 0;
+	padding: 0;
+}
+/*--------------upper DIV----------------*/
+#upDiv{
+	position: absolute;
+	top: 0%;
+	height: 10%;
+	width: 100%;
+	background-color: rgb(250,250,250);
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+	z-index: 1;
+}
+#upDiv img{
+	position: absolute;
+	height: 90%;
+	width: auto;
+	top: 5%;
+	left: 5%;
+}
+
+#upDiv a{
+	text-decoration: none;
+	color: black;
+}
+
+#upDiv a:hover{
+	color: rgb(0, 148, 255);
+}
+
+#menuHome{
+	position: absolute;
+	right: 30%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#menuDashboard {
+    position: absolute;
+    right: 19%;
+    top: 25%;
+	font-size:calc(.7vw + .7vh);
+	padding-left: 2%;
+	/*background: #fafafa url("../img/main/Picture3.png") no-repeat 0% 50%*/
+}
+
+#menuDashboard:hover {
+	/*background: #fafafa url("../img/main/Picture4.png") no-repeat 0% 50%*/
+}
+
+#menuUpload{
+	position: absolute;
+	right: 10%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#uploadMenu{
+	display: none;
+	position: absolute;
+	width: 12%;
+	background-color: black;
+	z-index: 1;
+	top: 10.5%;
+	font-size:calc(.7vw + .7vh);
+	left: 82%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+#uploadArrow{
+	position: absolute;
+	color: black;
+	left: 86%;
+	top: 2%;
+	z-index: 1;
+	font-size:calc(2vw + 2vh);
+	display: none;
+}
+
+#uploadMenu a{
+	text-decoration: none;
+	color: white;
+}
+
+#uploadMenu ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#uploadMenu li{
+	padding: 10%;
+}
+
+#uploadMenu li:hover{
+	background-color: rgb(0, 148, 255);
+}
+
+/*--------------main DIV----------------*/
+
+#trainingDiv{
+	position: absolute;
+	height: 87%;
+	width: 100%;
+	top: 10%;
+	display: block;
+}
+
+#trainingDiv img {
+    position: absolute;
+    width: auto;
+    height: 33%;
+    top: 20%;
+}
+
+#trainingDiv h1 {
+    position: absolute;
+    color: rgb(0, 148, 255);
+    left: 40%;
+    font-size: calc(.8vw + .8vh);
+    text-align: center;
+}
+
+#trainingDiv p {
+    position: absolute;
+    left: 52%;
+    font-size: calc(.6vw + .6vh);
+    top: 15%;
+}
+
+#trainingDiv input {
+    position: absolute;
+    left: 52%;
+    background-color: rgb(0, 148, 255);
+    color: white;
+    font-size: calc(.6vw + .6vh);
+    bottom: 30%;
+    height: 10%;
+    border: none;
+    cursor: pointer;
+}
+
+#trainingDiv input:hover{
+	bottom: 28%;
+}
+
+#firstCol{
+    position: absolute;
+    height: 90%;
+    width: 18.75%;
+    left: 5%;
+    top: 5%;
+}
+
+#secCol {
+    position: absolute;
+    height: 90%;
+    width: 18.75%;
+    left: 28.75%;
+    top: 5%;
+}
+
+
+#thirdCol{
+	position: absolute;
+	height: 90%;
+	width: 18.75%;
+	left: 52.5%;
+	top: 5%
+}
+
+#fourtCol{
+	position: absolute;
+	height: 90%;
+	width: 18.75%;
+	right: 5%;
+	top: 5%
+}
+
+.firstRow {
+    position: absolute;
+    top: 5%;
+    height: 45.6%;
+    width: 100%;
+}
+
+.secRow {
+    position: absolute;
+    top: 50.6%;
+    height: 45.6%;
+    width: 100%;
+}
+
+.thirdRow{
+	position: absolute;
+	bottom: 5%;
+	height: 26.6%;
+	width: 100%;
+}
+
+
+/*--------------footer DIV----------------*/
+#footDiv{
+	position: absolute;
+	height: 3%;
+	width: 100%;
+	background-color: rgb(50,50,50);
+	top: 97%;
+}
+
+
+/*--------------training docs DIV----------------*/
+
+#trainingDocs{
+	position: absolute;
+	height: 87%;
+	width: 100%;
+	top: 10%;
+	display: none;
+}
+
+#trainingTitle{
+	position: absolute;
+	height: 15%;
+	width: 100%;
+	background-color: rgb(0, 148, 255);
+}
+
+#trainingTitle h1{
+	position: absolute;
+	color: white;
+	font-size:calc(1.2vw + 1.2vh);
+	font-family: arial black;
+	top: 25%;
+	left: 5%;
+}
+
+#trainingTitle p{
+	position: absolute;
+	color: white;
+	font-size:calc(.6vw + .6vh);
+	font-family: arial;
+	top: 19%;
+	left: 5%;
+}
+
+#trainingContent{
+	position: absolute;
+	height: 75%;
+	width: 65%;
+	top: 20%;
+	left : 5%;
+}
+
+#trainingContent h3{
+	margin: 4%;
+	margin-left: 7%;
+	color: rgb(150,150,150);
+}
+
+#trainingContent ul{
+	list-style-type: none;
+	margin-top: 5%;
+	margin-left: 3%;
+}
+
+#trainingContent li{
+	padding-bottom: 2%;
+	font-size:calc(.65vw + .65vh);
+}
+
+#trainingContent a{
+	text-decoration: none;
+	color: black;
+}
+
+#trainingContent a:hover{
+	text-decoration: underline;
+	color: rgb(0, 148, 255);
+}
+
+.spanDel{
+	color: rgb(180,180,180);
+	font-size:calc(.5vw + .5vh);
+	cursor: pointer;
+}
+
+#goBackId{
+	position: absolute;
+	font-size:calc(4vw + 4vh);
+	top: 85%;
+	color: rgb(0, 148, 255);
+	cursor: pointer;
+}
+
+#trainingLinks{
+	background-color: rgb(200,200,200);
+	position: absolute;
+	height: 75%;
+	width: 20%;
+	top: 20%;
+	left : 75%;
+}
+
+#trainingLinks h1{
+	position: absolute;
+	top: 5%;
+	left: 15%;
+	font-size:calc(.8vw + .8vh);
+	color: rgb(0, 148, 255);
+}
+
+#trainingLinks ul{
+	position: absolute;
+	top: 16%;
+	left: 16%;
+	margin: 0;
+	padding: 0;
+	list-style-type: none; 
+}
+
+#trainingLinks li{
+	font-size:calc(.6vw + .6vh);
+	padding-bottom: 8%;
+}
+
+#trainingLinks b{
+	color: rgb(0, 148, 255);
+	font-size:calc(.7vw + .7vh);
+}
+
+#trainingLinks a{
+	text-decoration: none;
+	color: rgb(80,80,80);
+}
+
+#trainingLinks a:hover{
+	text-decoration: underline;
+}
+
+/*--------------------viwer---------------*/
+
+#trainViewer{
+	position: absolute;
+	background-color: white;
+	height: 87%;
+	width: 100%;
+	top: 10%;
+	display: none;
+}
+
+#trainViewer span{
+	position: absolute;
+	font-size:calc(4vw + 4vh);
+	top: 85%;
+	left: 5%;
+	color: rgb(0, 148, 255);
+	cursor: pointer;
+}
+
+#viewerHeader{
+	position: absolute;
+	height: 15%;
+	width: 100%;
+	background-color: rgb(0, 148, 255);
+	color: white;
+}
+
+#viewerHeader p{
+	position: absolute;
+	font-size: calc(.6vw + .6vh);
+	font-family: arial;
+	top: 19%;
+	left: 5%;
+}
+
+#viewerHeader h1{
+	position: absolute;
+	font-size: calc(1.2vw + 1.2vh);
+	font-family: arial black;
+	top: 25%;
+	left: 5%;
+}
+
+/*#viewerContent{
+	position: absolute;
+	height: 60%;
+	width: 80%;
+	top: 25%;
+	left: 10%;
+}*/
+
+#imgZoom{
+	position: absolute;
+	top: 25%;
+	left: 8%;
+	height: 40%;
+	max-width: 30%;
+	cursor: pointer;
+}
+
+#viewerContent a{
+	position: absolute;
+	bottom: 10%;
+	right: 8%;
+	display: none;
+}
+
+#viewerContent #txtContent{
+    position: absolute;
+    top: 32%;
+    left: 45%;
+    width: 48%;
+    height: 55%;
+    overflow: auto;
+}
+
+#imgViewer{
+	display: none;
+	position: absolute;
+	background-color: rgb(220,220,220);
+	height: 80%;
+	width: 80%;
+	left: 10%;
+	top: 10%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+#imgViewer img{
+	position: absolute;
+	top: 2%;
+	left: 2%;
+	height: 95%;
+	max-width: 95%;
+}
+
+#imgViewer h1{
+	position: absolute;
+	color: rgb(0, 148, 255);
+	z-index: 1000;
+	right: 2%;
+	top: 2%;
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+#docsDate {
+    position: absolute;
+    color: gray;
+    top: 23%;
+    left: 45%;
+    font-size: calc(.6vh + .6vw);
+}
+
+#docsUser {
+    position: absolute;
+    left: 45%;
+    top: 25%;
+    color: gray;
+    font-size: calc(.6vh + .6vw);
+}
+
+#viewerContent {
+    position: absolute;
+    height: 70%;
+    width: 90%;
+    top: 18%;
+    left: 5%;
+}
+
+#pButton{
+	display: table;
+	width: 100%;
+	height: 10%;
+}
+
+#pButton button{
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	border: none;
+	color: rgb(0, 148, 255);
+	cursor: pointer;
+	background-color: white;
+	padding-top: 11px;
+}
+
+#pButton i {
+    font-size: calc(2vh + 2vw);
+}
+
+
+#pButton P{
+	font-size: calc(0.8vh + .8vw)
+}
+
+#pContent {
+    padding: 3% 7%;
+    max-height: 75%;
+    overflow: auto;
+}
+
+#pContent button {
+    background-color: rgb(0, 148, 255);
+    border: none;
+    color: white;
+    margin-left: 2%;
+    padding: 1%;
+    font-size: calc(.8vh + .8vw);
+	cursor: pointer;
+}
+
+#pContent img {
+    margin-left: 10%;
+    max-width: 350px;
+    height: auto;
+}
+
+.spanEdt {
+    color: rgb(180, 180, 180);
+    font-size: calc(.5vw + .5vh);
+    cursor: pointer;
+}

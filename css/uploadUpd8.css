@@ -1,0 +1,519 @@
+body {
+	font-family: arial;
+	margin: 0;
+	padding: 0;
+}
+
+input[type=text]::-ms-clear {
+    display: none;
+}
+
+/*--------------upper DIV----------------*/
+#upDiv{
+	position: absolute;
+	top: 0%;
+	height: 10%;
+	width: 100%;
+	background-color: rgb(250,250,250);
+	z-index: 1;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+#upDiv img{
+	position: absolute;
+	height: 90%;
+	width: auto;
+	top: 5%;
+	left: 5%;
+}
+
+#upDiv a{
+	text-decoration: none;
+	color: black;
+}
+
+#upDiv a:hover{
+	color: rgb(0, 148, 255);
+}
+
+#menuHome{
+	position: absolute;
+	right: 30%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#menuDashboard {
+    position: absolute;
+    right: 19%;
+    top: 25%;
+	font-size:calc(.7vw + .7vh);
+	padding-left: 2%;
+	/*background: #fafafa url("../img/main/Picture3.png") no-repeat 0% 50%*/
+}
+
+#menuDashboard:hover {
+	/*background: #fafafa url("../img/main/Picture4.png") no-repeat 0% 50%*/
+}
+
+#menuUpload{
+	position: absolute;
+	right: 10%;
+	top: 25%;
+	font-size:calc(.7vw + .7vh);
+}
+
+#uploadMenu{
+	display: none;
+	position: absolute;
+	width: 12%;
+	background-color: black;
+	z-index: 1;
+	top: 10.5%;
+	font-size:calc(.7vw + .7vh);
+	left: 82%;
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+}
+
+#uploadArrow{
+	position: absolute;
+	color: black;
+	left: 86%;
+	top: 2%;
+	z-index: 1;
+	font-size:calc(2vw + 2vh);
+	display: none;
+}
+
+#uploadMenu a{
+	text-decoration: none;
+	color: white;
+}
+
+#uploadMenu ul{
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+}
+
+#uploadMenu li{
+	padding: 10%;
+}
+
+#uploadMenu li:hover{
+	background-color: rgb(0, 148, 255);
+}
+
+/*-------------foot DIV----------------*/
+#footDiv{
+	position: absolute;
+	height: 3%;
+	background-color: rgb(50,50,50);
+	width: 100%;
+	top: 97%;
+}
+
+/*------------main Div------------------*/
+
+#uploadDiv{
+	position: absolute;
+	height: 87%;
+	width: 100%;
+	background-color: rgb(220,220,220);
+	top: 10%;
+}
+
+#uploadHead h1{
+	position: absolute;
+	color: white;
+	font-size:calc(1.2vw + 1.2vh);
+	font-family: arial black;
+	top: 25%;
+	left: 5%;
+}
+
+#uploadHead p{
+	position: absolute;
+	color: white;
+	font-size:calc(.6vw + .6vh);
+	font-family: arial;
+	top: 19%;
+	left: 5%;
+}
+
+#uploadHead{
+	position: absolute;
+	height: 15%;
+	width: 100%;
+	background-color: rgb(0, 148, 255);
+}
+
+#uploadDetails{
+	position: absolute;
+	top: 20%;
+	left: 5%;
+	height: 70%;
+	width: 80%;
+}
+
+#upd8Title{
+	position: absolute;
+	top: 5%;
+	left: 5%;
+	height: 5%;
+	width: 20%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+}
+
+#upd8Category{
+	position: absolute;
+	top: 5%;
+	left: 28%;
+	height: 5.3%;
+	width: 20%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 95% 50%;
+}
+
+#upd8Category select{
+	padding: 6px 8px;
+	width: 130%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+	font-size: calc(.6vw + .6vh);
+}
+
+#upd8EmpID{
+	position: absolute;
+	top: 13%;
+	left: 5%;
+	height: 5%;
+	width: 15%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+}
+
+#upd8Month{
+	position: absolute;
+	top: 21%;
+	left: 5%;
+	height: 5%;
+	width: 9%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 93% 50%;
+}
+
+#upd8Month select{
+	padding: 6px 7px;
+	width: 140%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+	font-size: calc(.6vw + .6vh);
+}
+
+#upd8Day{
+	position: absolute;
+	top: 21%;
+	left: 16%;
+	height: 5%;
+	width: 6%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 93% 50%;
+}
+
+#txtEdit {
+    position: absolute;
+    background-color: rgb(245,245,245);
+    height: 5%;
+    width: 71.9%;
+    top: 49%;
+    left: 5%;
+    border: 1px solid rgb(150, 150, 150);
+    padding: 5px;
+}
+
+#txtEdit button {
+    border: none;
+    background-color: rgb(245,245,245);
+    cursor: pointer;
+    font-size: calc(.6vh + .6vw);
+    margin: 5px 2px;
+}
+
+
+#txtEdit button:hover{
+	color: rgb(0, 148, 255);
+}
+
+#upd8Day select{
+	padding: 6px 7px;
+	width: 160%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+	font-size: calc(.6vw + .6vh);
+}
+
+#upd8Year{
+	position: absolute;
+	top: 21%;
+	left: 24%;
+	height: 5%;
+	width: 7%;
+	padding-left: 1%;
+	font-size:calc(.6vw + .6vh);
+	border: 1px solid rgb(150,150,150);
+	overflow: hidden;
+	background: #fafafa url("../img/main/icon-select.png") no-repeat 93% 50%;
+}
+
+#upd8Year select{
+	padding: 6px 7px;
+	width: 150%;
+	border: none;
+	box-shadow: none;
+	background: transparent;
+	background-image: none;
+	-webkit-appearance: none;
+	font-size: calc(.6vw + .6vh);
+}
+
+#upd8Img{
+	position: absolute;
+	top: 29%;
+	left: 5%;
+	background-color: rgb(0, 148, 255);
+	height: 5%;
+	width: 14%;
+	color: white;
+	padding-top: 1%;
+	text-align: center;
+	font-size:calc(.6vw + .6vh);
+	cursor: pointer;
+}
+
+#upd8Img:hover{
+	background-color: rgb(105,191,255);
+}
+
+#upd8File{
+	position: absolute;
+	top: 38%;
+	left: 5%;
+	background-color: rgb(0, 148, 255);
+	height: 5%;
+	width: 14%;
+	color: white;
+	padding-top: 1%;
+	text-align: center;
+	font-size:calc(.6vw + .6vh);
+	cursor: pointer;
+}
+
+#upd8File:hover{
+	background-color: rgb(105,191,255);
+}
+
+
+input[type='file']{
+	position: absolute;
+	display: none;
+	top: 0%;
+}
+
+#img{
+	position: absolute;
+	top: 31%;
+	left: 21%;
+	color: rgb(120,120,120);
+	font-family: Vijaya;
+	font-size:calc(1vw + 1vh);
+}
+
+#file{
+	position: absolute;
+	top: 40%;
+	left: 21%;
+	color: rgb(120,120,120);
+	font-family: Vijaya;
+	font-size:calc(1vw + 1vh);
+}
+
+#removeImg{
+	font-family: Arial;
+	font-size:calc(.6vw + .6vh);
+	color: rgb(0, 148, 255);
+	cursor: pointer;
+}
+
+#removeFile{
+	font-family: Arial;
+	font-size:calc(.6vw + .6vh);
+	color: rgb(0, 148, 255);
+	cursor: pointer;
+}
+
+#upd8Text {
+    position: absolute;
+    top: 55.9%;
+    left: 5%;
+    height: 30%;
+    width: 71%;
+    padding: 1%;
+    font-size: calc(.6vw + .6vh);
+    font-family: Arial;
+    overflow: auto;
+    border: 1px solid rgb(150, 150, 150);
+    background-color: rgb(250,250,250);
+}
+
+#uploadUpd8{
+	position: absolute;
+	top: 95%;
+	left: 68%;
+	height: 6%;
+	width: 10%;
+	background-color: rgb(0, 148, 255);
+	border: none;
+	font-size:calc(.6vw + .6vh);
+	color: white;
+	cursor: pointer;
+}
+
+#uploadUpd8:hover{
+	background-color: rgb(105,191,255);
+}
+
+#clearUpd8{
+	position: absolute;
+	top: 95%;
+	left: 57%;
+	height: 6%;
+	width: 10%;
+	background-color: rgb(120,120,120);
+	border: none;
+	font-size:calc(.6vw + .6vh);
+	color: white;
+	cursor: pointer;
+}
+
+#clearUpd8:hover{
+	background-color: rgb(80,80,80);
+}
+
+#otherLinks{
+	position: absolute;
+	top: 22%;
+	left: 75%;
+	height: 70%;
+	width: 20%;
+	background-color: rgb(200,200,200);
+}
+
+#otherLinks h1{
+	position: absolute;
+	top: 5%;
+	left: 15%;
+	font-size:calc(.8vw + .8vh);
+	color: rgb(0, 148, 255);
+}
+
+#otherLinks ul{
+	position: absolute;
+	top: 16%;
+	left: 16%;
+	margin: 0;
+	padding: 0;
+	list-style-type: none; 
+}
+
+#otherLinks li{
+	font-size:calc(.6vw + .6vh);
+	padding-bottom: 8%;
+}
+
+#otherLinks b{
+	color: rgb(0, 148, 255);
+	font-size:calc(.7vw + .7vh);
+}
+
+#otherLinks a{
+	text-decoration: none;
+	color: rgb(80,80,80);
+}
+
+#otherLinks a:hover{
+	text-decoration: underline;
+}
+
+/*error Message div*/
+
+#errorMsg{
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.5);
+	z-index: 1000;
+	display: none;
+	opacity: 0;
+	transition: 0.5s;
+}
+
+#msgBx{
+	position: absolute;
+	top: 32%;
+	left: 35%;
+	width: 30%;
+	height: 25%;
+	background-color: rgb(220,220,220);
+	box-shadow: 0px 1px 10px 0px rgba(0,0,0,0.5);
+	font-size:calc(.7vw + .7vh);
+}
+
+#errNote{
+	position: absolute;
+	top: 75%;
+	left: 40%;
+	height: 15%;
+	width: 20%;
+	border: none;
+	background-color: rgb(0, 148, 255);
+	color: white;
+	font-size:calc(.6vw + .6vh);
+}
+
+#msgBx span{
+	position: absolute;
+	text-align: center;
+	width: 80%;
+	left: 10%;
+	top: 40%;
+}
+
+#msgBx div{
+	position: absolute;
+	width: 94%;
+	height: 10%;
+	color: white;
+	background-color: rgb(0, 148, 255);
+	padding: 3%;
+}

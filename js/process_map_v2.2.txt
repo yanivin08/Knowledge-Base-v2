@@ -1,0 +1,1675 @@
+var svgNS = 'http://www.w3.org/2000/svg';
+
+var coor = {initX: 0, initY: 0, finalX: 0, finalY: 0},
+    points = {topX: 0, topY: 0, leftX: 0, leftY: 0, bottomX: 0, bottomY: 0, rightX: 0, rightY: 0};
+    obj = {};
+	
+var style = document.createElement('style');
+style.type = 'text/css';
+document.getElementsByTagName('head')[0].appendChild(style);
+
+var dist = {initX: 0, initY: 0, finalX: 0, finalY: 0};
+
+var resize = {s: false, se: false, e: false, ew: false, w: false, nw: false, n: false, sn: false, move: false};
+
+var moveLines = {s: false, e: false, r: false};
+
+var dPoints = [], elemHolder = "";
+
+var currentPost = "";
+
+var currentView = 1;
+
+var lines = [], shapes = [];
+
+var steps = 1, nextID = '', ind = 0;
+
+function showProcess(){
+	if(shapes != "") {
+		ind = shapes.map(function(k){ return k.step}).indexOf("FIRST")
+		nextID = shapes[ind].id
+		steps = 1
+		previewProcess();
+	}
+}
+
+function previewProcess(){
+	
+	var divProcess = document.createElement('div');
+	divProcess.style.margin = '25px';
+	var txt = "";
+	var currID = shapes.map(function(e){return e.id}).indexOf(nextID);
+	
+	if(shapes[currID].shape == 'Diamond'){
+		var radioBtn = document.getElementsByName('boolean' + (steps-1));
+		if(radioBtn[0].checked){
+			nextID = shapes[currID].yes.id;
+		}else if(radioBtn[1].checked){
+			nextID = shapes[currID].no.id;
+		}else{
+
+		}
+	}else{
+		nextID = shapes[currID].connectedTo;
+	}
+	
+	shapes.forEach(function(i){	
+		if(i.id == nextID){
+			txt = i.text;
+			if(i.shape == 'Diamond'){
+				var pStep = document.createElement('p');
+				var inpNo = document.createElement('input');
+				var inpYes = document.createElement('input');
+				var labelY = document.createElement('label');
+				var labelN = document.createElement('label');
+				var img = document.createElement('image');
+				var fle = document.createElement('a');
+				
+				pStep.textContent = steps + '. ' + txt;
+				pStep.style.marginBottom = '10px';
+				
+				inpYes.setAttribute('type','radio');
+				inpYes.setAttribute('name','boolean' + steps);
+				inpYes.setAttribute('value','No');
+				
+				inpNo.setAttribute('type','radio');
+				inpNo.setAttribute('name','boolean' + steps);
+				inpNo.setAttribute('value','No');
+				
+				labelY.setAttribute('class','radio');
+				labelY.appendChild(inpYes);
+				labelY.innerHTML += 'Yes<span></span>';
+				labelY.style.margin = '30px';
+				
+				labelN.setAttribute('class','radio');
+				labelN.appendChild(inpNo);
+				labelN.innerHTML += 'No<span></span>';
+				labelN.style.margin = '30px';
+				
+				img.src = i.image;
+				img.style.margin = '15px';
+				
+				fle.href = i.file;
+				fle.style.margin = "30px";
+				fle.innerHTML = "<i class=\"fas fa-file-download\"></i> Attachment"
+				
+				divProcess.appendChild(pStep);
+				divProcess.appendChild(labelY);
+				divProcess.appendChild(labelN);
+
+				if(i.image != "") divProcess.appendChild(img);
+				if(i.file != ""){
+					divProcess.appendChild(document.createElement('br'));
+					divProcess.appendChild(fle);
+				}
+				
+			}else{
+				var pStep = document.createElement('p');
+				var img = document.createElement('image');
+				var fle = document.createElement('a');
+				
+				img.src = i.image;
+				img.style.margin = '15px';
+				fle.href = i.file;
+				fle.style.margin = "30px";
+				fle.innerHTML = "<i class=\"fas fa-file-download\"></i> Attachment"
+				pStep.textContent = steps + '. ' + txt;
+				divProcess.appendChild(pStep);
+				
+				if(i.image != "") divProcess.appendChild(img);
+				if(i.file != ""){
+					divProcess.appendChild(document.createElement('br'));
+					divProcess.appendChild(fle);	
+				}
+				
+			}
+			
+			
+			
+			steps += 1;
+		}
+	});
+	
+	document.getElementById('steps').appendChild(divProcess);
+	document.getElementById('processDIV').style.display = 'block';
+}
+
+function addPrevDiv(){
+	var processDiv = document.createElement('div');
+	var closeBtn = document.createElement('p');
+	var stepDiv = document.createElement('div');
+	var nxtBtn = document.createElement('input');
+	
+	processDiv.setAttribute('style','padding: 5vh 3vw; left: 5vw; top: 5vh; width: 84vw; height: 80vh; display: none; position: absolute; box-shadow: 5px 5px 10px rgba(0,0,0,0.5); background-color: rgb(230, 230, 230); overflow: auto; z-index: 2;');
+	processDiv.setAttribute('id','processDIV');
+	
+	closeBtn.textContent = '\u2327';
+	closeBtn.setAttribute('style','font-size: 40px; float: right; cursor: pointer;');
+	closeBtn.onmouseover = function(){
+		closeBtn.style.color = "orange";
+	}
+	closeBtn.onmouseout = function(){
+		closeBtn.style.color = "black";
+	}
+	closeBtn.setAttribute('onclick',"this.parentElement.style.display = 'none';document.getElementById('steps').innerHTML = ''")
+	
+	stepDiv.setAttribute('id','steps');
+	
+	nxtBtn.setAttribute('type','button');
+	nxtBtn.setAttribute('value','NEXT');
+	nxtBtn.setAttribute('onclick','previewProcess()');
+	nxtBtn.setAttribute('style','border: currentColor; width: 100px; height: 40px; margin-left: 40px; margin-bottom: 25px; background-color: rgb(255, 153, 51);');
+	
+	processDiv.appendChild(closeBtn);
+	processDiv.appendChild(stepDiv);
+	processDiv.appendChild(nxtBtn);
+	document.body.appendChild(processDiv);
+	
+}
+
+function remAttach(e){
+	//remove attachement for file and image
+	e.previousSibling.childNodes[1].value = ""
+	e.innerHTML = "";
+	
+	shapes.map(function(i){
+		if(i.active){
+			if(e.id == 'img'){
+				i.image = "";
+			}else if(e.id == 'fle'){
+				i.file = "";
+			}
+		}
+	});
+} 
+
+function getAttach(e,typ){
+	//add attachement for file and image
+	var fileName = e.value.substring(e.value.lastIndexOf("\\")+1,e.value.length),
+		fileShow = e.parentNode.nextSibling;
+		
+	shapes.map(function(i){
+		if(i.active){
+			if(typ == 'IMAGE'){
+				i.image = e.value;
+			}else if(typ == 'FILE'){
+				i.file = e.value;
+			}
+		}
+	});
+	
+	fileShow.innerHTML = fileName + "<b style='color:red;cursor:pointer;' onclick='remAttach(this.parentElement)'> x</b>";
+}
+
+function randomID(){
+	//create a random id for all elements
+	return Math.random().toString(36).substring(7);
+}
+
+function getDistance(pnts,post,x,y){
+	//this will return the nearest point on a shape when drawing a arrow lines
+	//return x, y, and position
+	var pointers = [{x:pnts.topX, y:pnts.topY, pos: 'top'},{x:pnts.leftX, y:pnts.leftY, pos: 'left'},{x:pnts.bottomX, y:pnts.bottomY, pos: 'bottom'},{x:pnts.rightX, y:pnts.rightY, pos: 'right'}];
+	var distance = ""
+	var nearestPoints = {x:0,y:0, pos: ''};
+	
+	for(var i=0;i<pointers.length;i++){
+		
+		if(post[pointers[i].pos] == ""){
+		
+			var distX = pointers[i].x - x,
+				distY = pointers[i].y - y,
+				dist = Math.sqrt(Math.pow(distX,2) + Math.pow(distY,2));
+			
+			if(distance == ""){
+				distance = dist
+				nearestPoints.x = pointers[i].x;
+				nearestPoints.y = pointers[i].y;
+				nearestPoints.pos = pointers[i].pos;
+				distance = dist;
+			}
+			
+			if(dist < distance){
+				nearestPoints.x = pointers[i].x;
+				nearestPoints.y = pointers[i].y;
+				nearestPoints.pos = pointers[i].pos;
+				distance = dist;
+			}
+		}
+	}
+	
+	return nearestPoints
+	
+}
+
+function changeBG(e,b){
+	//change the shapes back color
+	if(b){
+		e.style.backgroundColor = '#ff9933';
+	}else{
+		e.style.backgroundColor = 'rgb(0, 142, 208)';
+	}
+}
+
+function zoom(t){
+	var txtHolder = document.getElementById('shapeHolder');
+	
+	if(t=="zoomIN"){
+		currentView += .05;
+	}else if(t=="zoomOUT"){
+		currentView -= .05;
+	}
+	
+	var g = document.getElementById('Workspace');
+	g.setAttribute('transform','scale(' + currentView + ')');
+	
+	for(var i=0;i<txtHolder.children.length;i++){
+		var refId = txtHolder.children[i].getAttribute('shape-reference');
+		shapes.forEach(function(j){
+			if(j.id == refId){
+				txtHolder.children[i].style.left = (j.element.getBoundingClientRect().left - 130) + 'px';
+				txtHolder.children[i].style.top = j.element.getBoundingClientRect().top + 'px';
+				txtHolder.children[i].style.width = j.element.getBoundingClientRect().width + 'px';
+				txtHolder.children[i].style.height = j.element.getBoundingClientRect().height + 'px';
+				var fontS = parseFloat(txtHolder.children[i].style.fontSize.replace('px','')) * currentView;
+				
+				if(t == "zoomIn"){
+					txtHolder.children[i].style.fontSize += fontS + 'px';
+				}else if(t == "zoomOut"){
+					txtHolder.children[i].style.fontSize -= fontS + 'px';
+				}
+				
+			}
+		});
+	}
+	
+}
+
+function addZoom(e){
+	//add zoom in and out button
+	var addZ = document.createElement('div'),
+		zIn = document.createElement('div'),
+		zOut = document.createElement('div');
+	
+	zIn.textContent = '\u2795';
+	zOut.textContent = '\u2796';
+	
+	addZ.setAttribute('style','left: 150px; top: 14px; width: 90px; height: 40px; display: table; position: fixed;cursor:pointer');
+	
+	zOut.setAttribute('style','border: 1px solid rgb(200, 200, 200); text-align: center; vertical-align: middle; display: table-cell; border-top-right-radius: 50px; border-bottom-right-radius: 50px; background-color: rgb(190, 190, 190);');
+	zOut.setAttribute('id','zoomOUT');
+	zOut.setAttribute('onclick','zoom(this.id)');
+	
+	zIn.setAttribute('style','border: 1px solid rgb(200, 200, 200); text-align: center; vertical-align: middle; display: table-cell; border-top-left-radius: 50px; border-bottom-left-radius: 50px; background-color: rgb(190, 190, 190);');
+	zIn.setAttribute('id','zoomIN');
+	zIn.setAttribute('onclick','zoom(this.id)');
+	
+	addZ.appendChild(zIn);
+	addZ.appendChild(zOut);
+	
+	e.appendChild(addZ);
+}
+
+function createUpload(type, elem){
+	//create the upload element for each shapes
+	var fileType,id,sid,style;
+	
+	if(type == 'IMAGE'){
+		fileType = 'image';
+		id = 'trainImg';
+		sid = 'img';
+		style = '';
+		sstyle = 'margin-top:50px;';
+	}else{
+		fileType = '';
+		id = 'trainFile';
+		sid = 'fle';
+		style = 'left: 50px; top: 350px;';
+		sstyle = 'margin-top:145px;';
+	}
+	
+	var btn = document.createElement('label');
+	btn.setAttribute('id',id);
+	btn.setAttribute('style',style + 'cursor: pointer; width: 120px; height: 40px; text-align: center; line-height: 40px; font-size: 12px; position: absolute; background-color: #ff9933;');
+	btn.innerHTML = "UPLOAD " + type;
+	
+	var input = document.createElement('input');
+	input.setAttribute('style','display:none');
+	input.setAttribute('type','file');
+	input.setAttribute('accept',fileType);
+	input.setAttribute('onchange',"getAttach(this,'" + type + "')");
+	
+	var spn = document.createElement('span');
+	spn.setAttribute('style',sstyle + 'color: rgb(0, 142, 208); font-size: 1vw; font-style: italic; margin-left: 10px; position: absolute;');
+	spn.setAttribute('id',sid);
+	
+	btn.appendChild(input);
+	elem.appendChild(btn);
+	elem.appendChild(spn);
+	
+}
+
+function changeText(e){
+	//this will show the text inside the shape in text area everytime user select a shapes.
+	var txtHolder = document.getElementById('shapeHolder')
+	
+	for(var i=0;i<txtHolder.children.length;i++){
+		var txtActive = txtHolder.children[i].getAttribute('active');
+		if(txtActive == 'true'){
+			txtHolder.children[i].firstChild.textContent = e.value;
+		}	
+	}
+	
+	shapes.map(function(i){
+		if(i.active){
+			i.text = e.value;
+		}
+	})
+}
+
+function addTextDiv(name,e, type){
+	//creating a div where we can put all the text inside the SVG shapes
+	
+	//<------ this code below is for other browser except IE ------->
+	/*var foreignObj = document.createElementNS(svgNS,'foreignObject');
+	foreignObj.setAttribute('x',coor.initX);
+	foreignObj.setAttribute('y',coor.initY);
+	foreignObj.setAttribute('width',coor.finalX - coor.initX);
+	foreignObj.setAttribute('height',coor.finalY - coor.initY);
+	foreignObj.setAttribute('reference',elem.lastChild.id);
+	foreignObj.setAttribute('requiredFeatures','http://www.w3.org/TR/SVG11/feature#Extensibility');*/
+	//<------------------------------------------------------------->
+	/*var eWidth = e.getBoundingClientRect().width;
+	var eHeiht = e.getBoundingClientRect().height;
+	var eTop = e.getBoundingClientRect().top;
+	var eLeft = e.getBoundingClientRect().left - 130;*/
+	
+	var textHolder = document.getElementById('shapeHolder');
+	
+	
+	var divInside = document.createElement('div');
+	divInside.setAttribute('style','display: table; font-weight: bold; font-size: 14px; width: ' + (coor.finalX - coor.initX) + 'px; height: ' + (coor.finalY - coor.initY) + 'px; position: absolute; top:' + (coor.initY) + 'px ; left: ' + (coor.initX) + 'px;');
+	//divInside.setAttribute('style','display: table; font-weight: bold; font-size: 14px; width: ' + eWidth + 'px; height: ' + eHeiht + 'px; position: absolute; top:' + eTop + 'px ; left: ' + eLeft + 'px;');
+	divInside.setAttribute('shape-reference',e.id);
+	divInside.setAttribute('active',false);
+	divInside.setAttribute('type',type);
+	
+	var pInside = document.createElement('p');
+	pInside.setAttribute('style','color: rgb(255, 153, 51);display: table-cell; text-align: center; vertical-align: middle;')
+	pInside.textContent = name;
+	
+	divInside.appendChild(pInside);
+	
+	//foreignObj.appendChild(divInside); <---FOR OTHER BROWSER
+
+	textHolder.appendChild(divInside);
+	
+	return divInside
+}
+
+function addConditionalText(txt,positionX,positionY,id,sds){
+	
+	var textHolder = document.getElementById('shapeHolder');
+	
+	var divInside = document.createElement('div');
+	divInside.setAttribute('style','font-weight: bold; font-size: 18px; position: absolute; top:' + positionY+ 'px ; left: ' + positionX + 'px; text-align: center;');
+	divInside.setAttribute('shape-reference',id);
+	divInside.setAttribute('active',false);
+	divInside.setAttribute('type','label');
+	divInside.setAttribute('sides',sds);
+	divInside.setAttribute('label',txt);
+	
+	var pInside = document.createElement('p');
+	pInside.setAttribute('style','color: rgb(255, 153, 51); text-align: center');
+	pInside.textContent = txt;
+	
+	divInside.appendChild(pInside);
+	textHolder.appendChild(divInside);
+	
+	return divInside;
+}
+
+function addDiv(e){
+
+	var divElem = document.createElement('div');
+	divElem.setAttribute('id','shapeMenu');
+	divElem.setAttribute('style','position: fixed;background-color: rgb(16, 45, 94);width: 220px;height: 100vh;right: 0px;display: block;transition: all 1s ease 0s;padding: 50px;padding-top: 100px;display: none');
+	
+	var txtLabel = document.createElement('p');
+	txtLabel.textContent = 'TEXT:';
+	txtLabel.setAttribute('style','color: rgb(255, 153, 51); padding-bottom: 10px; font-size: 1vw;')
+	
+	var txtArea = document.createElement('textarea');
+	txtArea.setAttribute('id','shapeText')
+	txtArea.setAttribute('onchange','changeText(this)');
+	txtArea.setAttribute('style','padding: 15px; border: currentColor; width: 230px; height: 50px; background-color: rgba(14, 27, 70, 1); resize: none; color: rgb(0, 142, 208)')
+	
+	
+	var divUpload = document.createElement('div');
+	divUpload.setAttribute('style','height: 200px; width: 260px; margin-top: 50px; background-color: rgba(0, 0, 0, 0);');
+
+	createUpload('IMAGE',divUpload);
+	createUpload('FILE',divUpload);
+	
+	divElem.appendChild(txtLabel);
+	divElem.appendChild(txtArea);
+	divElem.appendChild(divUpload);
+
+	e.appendChild(divElem);
+}
+
+function addHolder(e){
+	var divHolder = document.createElement('div');
+	divHolder.setAttribute('id','shapeHolder');
+	e.appendChild(divHolder);
+}
+
+function prevBtn(e){
+	var divs = document.createElement('div'),
+		inpBtn = document.createElement('input');
+	
+	divs.setAttribute('style','left: 150px; bottom: 40px; position: fixed;');
+	inpBtn.setAttribute('style','border: currentColor; width: 100px; height: 40px; color: orange; cursor: pointer; background-color: rgb(16, 45, 94);');
+	inpBtn.setAttribute('type','button')
+	inpBtn.setAttribute('value','PREVIEW');
+	inpBtn.setAttribute('id','prevBTN');
+	inpBtn.setAttribute('onclick','showProcess()');
+	
+	divs.appendChild(inpBtn);
+	e.appendChild(divs);
+}
+
+function activeTool(id){
+	var shapeElem = document.querySelector('#' + id).parentNode;
+
+	for(var i=0;i<shapeTools.length;i++){
+		if(shapeTools[i].name == id){
+			shapeTools[i].active = true;
+		}else{
+			shapeTools[i].active = false;
+		}
+		
+		if(shapeTools[i].name != 'Selector'){
+			
+			var wSpace = document.querySelector('#Workspace');
+			
+			document.getElementById('shapeMenu').style.width = '0px';
+			document.getElementById('shapeMenu').style.display = 'none';
+		
+		}
+	}
+	
+	for(var i=0;i<shapeElem.childNodes.length;i++){
+		if(shapeElem.childNodes[i].id == id){
+			shapeElem.childNodes[i].className.baseVal = "active";
+		}else{
+			shapeElem.childNodes[i].className.baseVal = 'inactive';
+		}
+	}
+}
+
+function getPoints(){
+	//First Point: Top
+	points.topX = coor.initX + ((coor.finalX - coor.initX)/2),
+	points.topY = coor.initY,
+	// Second Point : Right
+	points.rightX = coor.initX + (coor.finalX - coor.initX),
+	points.rightY = coor.initY + ((coor.finalY - coor.initY)/2),
+	// Third Point : Bottom
+	points.bottomX = coor.initX + ((coor.finalX - coor.initX)/2),
+	points.bottomY = coor.finalY,
+	// Fourth Point : Left
+	points.leftX = coor.initX,
+	points.leftY = coor.initY + ((coor.finalY - coor.initY)/2);
+}
+
+function dPath(){
+	//return the path of the diamonds
+	getPoints();
+
+	return "M " + points.topX + " " + points.topY + 
+		   " L " + points.rightX + " " + points.rightY + 
+		   " L " + points.bottomX + " " + points.bottomY + 
+		   " L " + points.leftX + " " + points.leftY + " Z";
+		   
+}
+
+function getDPoints(elem){
+	//get all x,y corner of all the shapes
+	dPoints = [];
+	
+	var diamondCoor = elem.getAttribute('d').substring(0,elem.getAttribute('d').length-2).substring(2).split('L').map(function(x){ return x.trim() });
+						
+	diamondCoor.forEach(function(j){
+		var temp = {};
+		temp.x = parseInt(j.split(" ")[0]);
+		temp.y = parseInt(j.split(" ")[1]);
+		dPoints.push(temp);
+	});
+}
+
+function SVG(elem,type){
+	//create an object
+	var holder = this
+	
+	this.svg = document.createElementNS(svgNS, 'svg');
+	this.box = elem.getBoundingClientRect();
+	this.elem = elem;
+	this.svg.setAttribute('height',this.box.height * 2);
+	this.svg.setAttribute('width',this.box.width * 2);
+	
+	if(type == "Workspace"){
+		//only create DIV for workspace element
+		addHolder(elem);
+		addDiv(elem);
+		//addZoom(elem);
+		prevBtn(elem);
+		this.g = document.createElementNS(svgNS, 'g')
+		this.g.setAttribute('id',type);
+		this.svg.appendChild(this.g);
+		document.body.addEventListener('keydown',function(e){
+			holder.deleteShape(e.keyCode);
+		});
+		addPrevDiv();
+	}
+
+	this.type = type;
+	this.shapes = [];
+	elem.appendChild(this.svg);
+}
+
+function changeLines(initPost,finalPost,initX,initY,finalX,finalY){
+	var pathStr = ""
+	
+	if(finalPost == "top"){
+		if(initPost == "bottom"){
+			if(initX == finalX){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + finalX + ' ' + (finalY - 10);
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (initY + ((finalY - initY)/2)) + ' L ' + finalX + ' ' + (initY + ((finalY - initY)/2)) + ' L ' + finalX + ' ' + (finalY -10);
+			}
+		}else if(initPost == "left" || initPost == "right"){
+			pathStr = 'M ' + initX + ' ' + initY + ' L ' + finalX + ' ' + initY + ' L ' + finalX + ' ' + (finalY - 10);	
+		}else if(initPost == "top"){
+			if(initY < finalY){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (initY - 50) + ' L ' + finalX + ' ' + (initY - 50)  + ' L ' + finalX + ' ' + (finalY-10);
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (finalY - 50) + ' L ' + finalX + ' ' + (finalY - 50) + ' L ' + finalX + ' ' + (finalY-10);
+			}
+		}
+		pathStr += 'M ' + finalX + ' ' + finalY + ' L ' + (finalX + 7) + ' ' + (finalY - 10) + ' L ' + (finalX - 7) + ' ' + (finalY - 10) + ' Z ';
+	}else if(finalPost == "bottom"){
+		if(initPost == "top"){
+			if(initX == finalX){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + finalX + ' ' + (finalY + 10);
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (initY - ((initY - finalY)/2)) + ' L ' + finalX + ' ' + (initY - ((initY - finalY)/2)) + ' L ' + finalX + ' ' + (finalY + 10);
+			}
+		}else if(initPost == "left" || initPost == "right"){
+			pathStr = 'M ' + initX + ' ' + initY + ' L ' + finalX + ' ' + initY + ' L ' + finalX + ' ' + (finalY + 10);	
+		}else if(initPost == "bottom"){
+			if(initY > finalY){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (initY + 50) + ' L ' + finalX + ' ' + (initY + 50) + ' L ' + finalX + ' ' + (finalY + 10); 
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + (finalY + 50) + ' L ' + finalX + ' ' + (finalY + 50) + ' L ' + finalX + ' ' + (finalY + 10);
+			}
+		}
+		pathStr += 'M ' + finalX + ' ' + finalY + ' L ' + (finalX + 7) + ' ' + (finalY + 10) + ' L ' + (finalX - 7) + ' ' + (finalY + 10) + ' Z ';
+	}else if(finalPost == "left"){
+		if(initPost == "top" || initPost == "bottom"){
+			pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + finalY + ' L ' + (finalX - 10) + ' ' + finalY;
+		}else if(initPost == "right"){
+			if(initY == finalY){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (finalX - 10) + ' ' + finalY;
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (initX + ((finalX - initX)/2)) + ' ' + initY + ' L ' + (initX + ((finalX - initX)/2)) + ' ' + finalY + ' L ' +  (finalX - 10) + ' ' + finalY;
+			}
+		}else if(initPost == "left"){
+			if(initX < finalX){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (initX - 50) + ' ' + initY + ' L ' + (initX - 50) + ' ' + finalY + ' L ' + (finalX - 10) + ' ' + finalY;
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (finalX - 50) + ' ' + initY + ' L ' + (finalX - 50) + ' ' + finalY + ' L ' + (finalX - 10) + ' ' + finalY;
+			}
+		}
+		pathStr += 'M ' + finalX + ' ' + finalY + ' L ' + (finalX - 10) + ' ' + (finalY + 7) + ' L ' + (finalX - 10) + ' ' + (finalY - 7) + ' Z ';
+	}else if(finalPost == "right"){
+		if(initPost == "top" || initPost == "bottom"){
+			pathStr = 'M ' + initX + ' ' + initY + ' L ' + initX + ' ' + finalY + ' L ' + (finalX + 10) + ' ' + finalY;
+		}else if(initPost == "left"){
+			if(initY == finalY){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (finalX + 10) + ' ' + finalY;
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (initX - ((initX - finalX)/2)) + ' ' + initY + ' L ' + (initX - ((initX - finalX)/2)) + ' ' + finalY + ' L ' +  (finalX + 10) + ' ' + finalY;
+			}
+		}else if(initPost == "right"){
+			if(initX > finalX){
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (initX + 50) + ' ' + initY + ' L ' + (initX + 50) + ' ' + finalY + ' L ' + (finalX + 10) + ' ' + finalY;
+			}else{
+				pathStr = 'M ' + initX + ' ' + initY + ' L ' + (finalX + 50) + ' ' + initY + ' L ' + (finalX + 50) + ' ' + finalY + ' L ' + (finalX + 10) + ' ' + finalY;
+			}
+		}
+		pathStr += 'M ' + finalX + ' ' + finalY + ' L ' + (finalX + 10) + ' ' + (finalY + 7) + ' L ' +	(finalX + 10) + ' ' + (finalY - 7) + ' Z ';
+	}
+	
+	return pathStr;
+}
+
+SVG.prototype.showTools = function(){
+	//create the menu tool
+	if(this.type = "Tools"){
+		for(var i=0;i<shapeTools.length;i++){
+			if(shapeTools[i].shape == "Pointer"){
+				var toolShape = document.createElementNS(svgNS, 'path');
+				toolShape.setAttribute("d","M 40 95 L 87 129 L 68 129 L 76 143 L 65 150 L 56 134 L 45 148 Z");
+				toolShape.setAttribute("id",shapeTools[i].name);
+				toolShape.setAttribute('class','active');
+				toolShape.setAttribute("onclick","activeTool(this.id)");
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Oval"){
+				var toolShape = document.createElementNS(svgNS, 'rect');
+				toolShape.setAttribute("width",60);
+				toolShape.setAttribute("height",45);
+				toolShape.setAttribute("x",30);
+				toolShape.setAttribute("y",180	);
+				toolShape.setAttribute("rx",20)
+				toolShape.setAttribute('class','inactive');
+				toolShape.setAttribute("id",shapeTools[i].name)
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Rectangle"){
+				var toolShape = document.createElementNS(svgNS, 'rect');
+				toolShape.setAttribute("width",60);
+				toolShape.setAttribute("height",45);
+				toolShape.setAttribute("x",30);
+				toolShape.setAttribute("y",250);
+				toolShape.setAttribute('class','inactive');
+				toolShape.setAttribute("id",shapeTools[i].name)
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Diamond"){
+				var toolShape = document.createElementNS(svgNS, 'path');
+				toolShape.setAttribute("d","M 60 320 L 90 350 L 60 380 L 30 350 Z");
+				toolShape.setAttribute("id",shapeTools[i].name)
+				toolShape.setAttribute('class','inactive');
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Arrow"){
+				var toolShape = document.createElementNS(svgNS, 'path');
+				toolShape.setAttribute("d","M 40 410 L 85 455 M 30 400 L 30 420 L 50 400 Z");
+				toolShape.setAttribute("id",shapeTools[i].name)
+				toolShape.setAttribute('class','inactive');
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Text"){
+				
+				var toolShape = document.createElementNS(svgNS, 'text');
+				toolShape.setAttribute('x',35);
+				toolShape.setAttribute('y',600);
+				toolShape.setAttribute('id',shapeTools[i].name)
+				toolShape.setAttribute('class','inactive');
+				toolShape.textContent = "T";
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				toolShape.style.fontSize = "75px"
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}else if(shapeTools[i].shape == "Arrows"){
+				var toolShape = document.createElementNS(svgNS, 'path');
+				toolShape.setAttribute("d","M 40 480 L 75 515 M 30 470 L 30 490 L 50 470 Z M 85 525 L 85 505 L 65 525 Z");
+				toolShape.setAttribute("id",shapeTools[i].name)
+				toolShape.setAttribute('class','inactive');
+				toolShape.setAttribute("onclick","activeTool(this.id)")
+				this.shapes.push(toolShape);
+				this.svg.appendChild(toolShape);
+			}
+		}
+	}	
+}
+
+SVG.prototype.addShape = function(x,y,elem){
+	
+	coor.initX = x - this.box.left + this.elem.scrollLeft;
+	coor.initY = y - this.box.top + this.elem.scrollTop;
+	
+	var thisTemp = this;
+	
+	if(this.type = "Workspace"){
+		
+		for(var i=0;i<shapeTools.length;i++){
+			if(shapeTools[i].active == true){
+				
+				switch(shapeTools[i].shape){
+					case 'Rectangle':
+						console.log(this.g);
+						var drawShapes = document.createElementNS(svgNS,'rect');
+						//var gContained = document.createElementNS(svgNS,'g');
+						drawShapes.setAttribute('x',coor.initX);
+						drawShapes.setAttribute('y',coor.initY);
+						drawShapes.setAttribute('class',shapeTools[i].shape);
+						drawShapes.setAttribute('id',randomID());
+						//gContained.appendChild(drawShapes);
+						this.g.appendChild(drawShapes);
+						break;
+					case 'Oval':
+						var drawShapes = document.createElementNS(svgNS,'rect');
+						//var gContained = document.createElementNS(svgNS,'g');
+						drawShapes.setAttribute('x',coor.initX);
+						drawShapes.setAttribute('y',coor.initY);
+						drawShapes.setAttribute('rx',20);
+						drawShapes.setAttribute('class',shapeTools[i].shape);
+						drawShapes.setAttribute('id',randomID());
+						//gContained.appendChild(drawShapes);
+						this.g.appendChild(drawShapes);
+						break;
+					case 'Diamond':
+						var drawShapes = document.createElementNS(svgNS,'path')
+						//var gContained = document.createElementNS(svgNS,'g');
+						drawShapes.setAttribute('class',shapeTools[i].shape);
+						drawShapes.setAttribute('id',randomID());
+						//gContained.appendChild(drawShapes);
+						this.g.appendChild(drawShapes);
+						break;
+					case 'Arrow':
+
+						obj.connectedFrom = "";
+						obj.connectedTo = ""
+						
+						shapes.forEach(function(k){
+							if(k.element == elem){
+								var nearPnts = getDistance(k.points,k.connection,coor.initX,coor.initY);
+								
+								if(nearPnts.x != 0 && nearPnts.y != 0){
+									
+									var drawShapes = document.createElementNS(svgNS,'path')
+									drawShapes.setAttribute('class',shapeTools[i].shape);
+									drawShapes.setAttribute('id',randomID());
+									thisTemp.g.appendChild(drawShapes);
+									
+									if(nearPnts.x != 0){
+										coor.initX = nearPnts.x;
+									}
+									if(nearPnts.y != 0){	
+										coor.initY = nearPnts.y;
+									}
+									
+									if(k.shape == 'Diamond'){
+										
+										var postX, postY;
+										
+										if(nearPnts.pos === 'top' || nearPnts.pos === 'right'){
+											postX = coor.initX + 10;
+											postY = coor.initY - 25;
+										}else if(nearPnts.pos === 'bottom'){
+											postX = coor.initX + 10;
+											postY = coor.initY + 5;
+										}else if(nearPnts.pos === 'left'){
+											postX = coor.initX - 15;
+											postY = coor.initY - 25;
+										}
+										
+										if(k.yes.post == ""){
+											k.yes.text = addConditionalText('Y',postX,postY,k.id,nearPnts.pos);
+											k.yes.post = nearPnts.pos
+											k.yes.line = drawShapes.id;
+										}else if(k.no.post == ""){
+											k.yes.text = addConditionalText('N',postX,postY,k.id,nearPnts.pos);
+											k.no.post = nearPnts.pos
+											k.no.line = drawShapes.id;
+										}
+									}
+									
+									currentPost = nearPnts.pos
+									obj.connectedFrom = k.element.id;
+									obj.fromPosition = nearPnts.pos;
+									k.connection[nearPnts.pos] = drawShapes.id;
+								}
+							}
+						});
+
+						break;
+				}
+			}
+		}
+	}
+}
+
+SVG.prototype.updateShape = function(x,y,elem,bool){
+	
+	coor.finalX = x - this.box.left + this.elem.scrollLeft;
+	coor.finalY = y - this.box.top + this.elem.scrollTop;
+	
+	var tempThis = this
+	
+	if(this.type = "Workspace"){
+		for(var i=0;i<shapeTools.length;i++){
+			if(shapeTools[i].active == true){
+				
+				switch(shapeTools[i].shape){
+					
+					case 'Rectangle':
+						getPoints();
+						this.g.lastChild.setAttribute('class','Rectangle')
+						this.g.lastChild.setAttribute('height',coor.finalY - coor.initY);
+						this.g.lastChild.setAttribute('width',coor.finalX  - coor.initX);
+						
+						if(!bool){
+							//if(coor.initX >= coor.finalX || coor.initY >= coor.finalY){
+							if(coor.finalX - coor.initX < 80 && coor.finalY - coor.initY < 35){
+								this.g.removeChild(this.g.lastChild);
+							}else{
+								obj.textElement = addTextDiv(shapeTools[i].name,this.g.lastChild,'inside');
+								obj.element = this.g.lastChild;
+								obj.coordinates = coor;
+								obj.points = points;
+								obj.text = shapeTools[i].name;
+								obj.name = shapeTools[i].name;
+								obj.shape = shapeTools[i].shape;
+								obj.connection = {top: "", left: "", bottom: "", right: ""};
+								obj.connectedFrom = "";
+								obj.active = false;
+								obj.id = this.g.lastChild.id
+								obj.image = "";
+								obj.file = "";
+								shapes.push(obj);
+								coor = {initX: 0, initY: 0, finalX: 0, finalY: 0};
+								points = {topX: 0, topY: 0, leftX: 0, leftY: 0, bottomX: 0, bottomY: 0, rightX: 0, rightY: 0};
+								obj = {};
+							}
+						}
+						break;
+					case 'Oval':
+						getPoints();
+						this.g.lastChild.setAttribute('class','Oval');
+						this.g.lastChild.setAttribute('height',coor.finalY - coor.initY);
+						this.g.lastChild.setAttribute('width',coor.finalX  - coor.initX);
+						if(!bool){
+							//if(coor.initX >= coor.finalX || coor.initY >= coor.finalY){
+							if(coor.finalX - coor.initX < 80 && coor.finalY - coor.initY < 35){
+								this.g.removeChild(this.g.lastChild);
+							}else{
+								
+								var ind = shapes.map(function(k){ return k.shape}).indexOf('Oval')
+								
+								obj.textElement = addTextDiv((ind == -1) ? "START" : "END",this.g.lastChild,'inside');
+								obj.element = this.g.lastChild;
+								obj.coordinates = coor;
+								obj.points = points;
+								(ind == -1) ? obj.text = "START" : obj.text = "END";
+								(ind == -1) ? obj.step = "FIRST" : obj.step = "LAST";
+								obj.name = shapeTools[i].name;
+								obj.shape = shapeTools[i].shape;
+								obj.connection = {top: "", left: "", bottom: "", right: ""};
+								obj.connectedFrom = "";
+								obj.active = false;
+								obj.id = this.g.lastChild.id
+								obj.image = "";
+								obj.file = "";
+								shapes.push(obj);
+								coor = {initX: 0, initY: 0, finalX: 0, finalY: 0};
+								points = {topX: 0, topY: 0, leftX: 0, leftY: 0, bottomX: 0, bottomY: 0, rightX: 0, rightY: 0};
+								obj = {};
+							}
+						}
+						break;
+					case 'Diamond':
+						this.g.lastChild.setAttribute('class','Diamond');
+						this.g.lastChild.setAttribute('d',dPath());
+						if(!bool){
+							if(coor.initX >= coor.finalX || coor.initY >= coor.finalY){
+								this.g.removeChild(this.g.lastChild);
+							}else{
+								
+								obj.textElement = addTextDiv(shapeTools[i].name,this.g.lastChild, 'inside');
+								obj.element = this.g.lastChild;
+								obj.coordinates = coor;
+								obj.points = points;
+								obj.text = shapeTools[i].name;
+								obj.name = shapeTools[i].name;
+								obj.shape = shapeTools[i].shape;
+								obj.connection = {top: "", left: "", bottom: "", right: ""};
+								obj.connectedFrom = "";
+								obj.yes = {id: "", post: "", line: ""};
+								obj.no = {id: "", post: "", line: ""};
+								obj.active = false;
+								obj.id = this.g.lastChild.id
+								obj.image = "";
+								obj.file = "";
+								shapes.push(obj);
+								coor = {initX: 0, initY: 0, finalX: 0, finalY: 0};
+								points = {topX: 0, topY: 0, leftX: 0, leftY: 0, bottomX: 0, bottomY: 0, rightX: 0, rightY: 0};
+								obj = {};
+							}
+						}
+						break;
+					case 'Arrow':
+						
+						if(coor.initX > coor.finalX){
+							coor.finalX += 5
+						}else{
+							coor.finalX -= 5
+						}
+						
+						if(coor.initY > coor.finalY){
+							coor.finalY += 5
+						}else{
+							coor.finalY -= 5
+						}
+
+						var tempI;
+						var nearPnts
+						
+						shapes.forEach(function(i){
+							if(i.element == elem){
+								i.element.style.cursor = 'crosshair';
+								i.element.style.stroke = 'rgb(0, 142, 208)'
+								if(!bool){
+									if(elem.id != obj.connectedFrom){
+										nearPnts = getDistance(i.points,i.connection,coor.finalX,coor.finalY);
+										coor.finalX = nearPnts.x;
+										coor.finalY = nearPnts.y;
+										i.connection[nearPnts.pos] = tempThis.g.lastChild.id;
+										tempI = i;
+										obj.connectedTo = i.element.id;	
+									}
+								}
+							}else{
+								i.element.style.cursor = 'default';
+								i.element.style.stroke = '#FF9933';
+							}
+						});
+						
+						
+						if(!bool){
+							if(nearPnts != undefined){
+								this.g.lastChild.setAttribute('d',changeLines(currentPost,nearPnts.pos,coor.initX,coor.initY,coor.finalX,coor.finalY));
+								this.g.lastChild.setAttribute('class','Arrow');
+							}else{
+								shapes.map(function(j){ 
+									if(j.id == obj.connectedFrom){
+										j.id.connectedFrom = obj.connectedFrom;
+										for(var pos in j.connection){
+											if(j.connection[pos] == tempThis.g.lastChild.id){
+												j.connection[pos] = "";
+											}
+										}
+										tempThis.g.removeChild(tempThis.g.lastChild);
+									}
+								});
+							}
+						}else{
+							if(this.g.lastChild != undefined || this.g.lastChild != null){
+								if(currentPost == 'bottom'){
+									if(coor.initY + 30 < coor.finalY){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.initX + ' ' + coor.finalY+ ' L ' + coor.finalX + ' ' + coor.finalY);
+									}else if(coor.initY + 30 > coor.finalY){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.initX + ' ' + (coor.initY + 30) + ' L ' + coor.finalX + ' ' + (coor.initY + 30) + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}
+								}else if(currentPost == 'top'){
+									if(coor.initY - 30 > coor.finalY){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.initX + ' ' + coor.finalY+ ' L ' + coor.finalX + ' ' + coor.finalY);
+									}else if(coor.initY - 30 < coor.finalY){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.initX + ' ' + (coor.initY - 30) + ' L ' + coor.finalX + ' ' + (coor.initY - 30) + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}
+								}else if(currentPost == 'left'){
+									if(coor.initX - 30 > coor.finalX){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.finalX + ' ' + coor.initY + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}else if(coor.initX - 30 < coor.finalX){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + (coor.initX - 30) + ' ' + coor.initY + ' L ' + (coor.initX - 30) + ' ' + coor.finalY + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}
+								}else if(currentPost == 'right'){
+									if(coor.initX + 30 < coor.finalX){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + coor.finalX + ' ' + coor.initY + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}else if(coor.initX + 30 > coor.finalX){
+										this.g.lastChild.setAttribute('d','M ' + coor.initX + ' ' + coor.initY + ' L ' + (coor.initX + 30) + ' ' + coor.initY + ' L ' + (coor.initX + 	 30) + ' ' + coor.finalY + ' L ' + coor.finalX + ' ' + coor.finalY);
+									}
+								}
+							}
+						}
+						if(!bool && nearPnts != undefined){
+							var disX = coor.initX - coor.finalX,
+								disY = coor.initY - coor.finalY,
+								dis = Math.sqrt(Math.pow(disX,2) + Math.pow(disY,2));
+					
+							if(dis <= 20){
+								shapes.map(function(j){ 
+									if(j.id == obj.connectedFrom){
+										for(var pos in j.connection){
+											if(j.connection[pos] == tempThis.g.lastChild.id){
+												j.connection[pos] = "";
+											}
+										}
+									}
+								});
+								this.g.removeChild(this.g.lastChild);
+							}else{
+								obj.element = this.g.lastChild;
+								obj.coordinates = coor;
+								obj.name = shapeTools[i].name;
+								obj.shape = shapeTools[i].shape;
+								obj.active = false;
+								obj.id = this.g.lastChild.id;	
+								lines.push(obj);
+								coor = {initX: 0, initY: 0, finalX: 0, finalY: 0};
+								obj = {};
+								currentPost = "";
+								
+								lines.forEach(function(j){
+									if(j.id == tempThis.g.lastChild.id){
+										j.toPosition = nearPnts.pos;
+										if(tempI != undefined){
+											tempI.connectedFrom = j.connectedFrom;
+										}
+									}
+								});
+								
+								shapes.forEach(function(k){
+									if(tempI != undefined && k.id == tempI.connectedFrom){
+										k.connectedTo = tempI.id;
+										if(k.shape == 'Diamond'){
+											if(k.no.post != ""){
+												k.no.id = tempI.id;
+											}else{
+												k.yes.id = tempI.id;
+											}
+										}
+									}
+								});
+							}
+						}
+						
+						break;
+						
+					case 'Pointer':
+						if(!bool){
+						
+							resize = {s: false, se: false, e: false, ew: false, w: false, nw: false, n: false, sn: false, move: false};
+							elemHolder = ""
+							
+							shapes.map(function(i){
+								if(i.active && i.element == elem){
+									
+									document.getElementById('shapeMenu').style.display = 'block';
+									document.getElementById('shapeMenu').style.width = '260px';
+									
+									switch(elem.className.baseVal){
+										case 'Rectangle':
+										case 'Oval':
+											
+											coor.initX = elem.x.baseVal.value;
+											coor.initY = elem.y.baseVal.value;
+											coor.finalX = elem.x.baseVal.value + elem.width.baseVal.value;
+											coor.finalY = elem.y.baseVal.value + elem.height.baseVal.value
+
+											getPoints();
+											
+											i.coordinates = coor;
+											i.points = points;
+											
+											coor = {};
+											points = {};
+											break;
+										case 'Diamond':
+											
+											getDPoints(elem);
+						
+											coor.initX = dPoints[3].x;
+											coor.initY = dPoints[0].y;
+											coor.finalX = dPoints[1].x;
+											coor.finalY = dPoints[2].y;
+											
+											getPoints();
+											
+											i.coordinates = coor;
+											i.points = points;
+											
+											coor = {};
+											points = {};
+											
+											break;
+									}
+								}
+							});		
+						}
+				}
+			}
+		}
+	}
+}
+
+SVG.prototype.restyleShape = function(x,y,elem){
+		
+	mouseX = x - this.box.left + this.elem.scrollLeft;
+	mouseY = y - this.box.top + this.elem.scrollTop;
+	
+	if(shapeTools[0].active){
+		shapes.map(function(i){
+			
+			if(i.element == elem && i.active){
+				switch(i.shape){
+					case 'Rectangle':
+					case 'Oval':
+						if(mouseX >= i.coordinates.initX && mouseX < i.coordinates.finalX - 10 &&
+							mouseY >= i.coordinates.initY && mouseY < i.coordinates.finalY - 10){
+								elem.style.cursor = 'move';
+						}else if(mouseX < i.coordinates.finalX + 10 && mouseX > i.coordinates.finalX - 10 &&
+									mouseY < i.coordinates.finalY + 10 && mouseY > i.coordinates.finalY - 10){
+										elem.style.cursor = 'se-resize';
+						}else if(mouseX < i.coordinates.finalX + 10 && mouseX > i.coordinates.finalX - 10){
+							elem.style.cursor = 'e-resize';
+						}else if(mouseY < i.coordinates.finalY + 10 && mouseY > i.coordinates.finalY - 10){
+							elem.style.cursor = 's-resize';
+						}
+						break;
+					case 'Diamond':
+						
+						getDPoints(elem);
+						
+						if(mouseX <= dPoints[1].x - 10 && mouseX >= dPoints[3].x && mouseY <= dPoints[2].y - 10 && mouseY >= dPoints[0].y){
+							elem.style.cursor = 'move';
+							
+						}else if(mouseX <= dPoints[1].x + 10 && mouseX >= dPoints[1].x - 10 && mouseY <= dPoints[1].y + 10 && mouseY >= dPoints[1].y - 10){
+							elem.style.cursor = 'e-resize';
+						}else if(mouseX <= dPoints[2].x + 10 && mouseX >= dPoints[2].x - 10 && mouseY <= dPoints[2].y + 10 && mouseY >= dPoints[2].y - 10){
+							elem.style.cursor = 's-resize';
+						}
+							
+						break;
+				}
+			}
+		});	
+	}else if(shapeTools[4].active/* || shapeTools[5].active*/){
+		shapes.map(function(i){
+			if(i.element == elem){
+				i.element.style.cursor = 'crosshair';
+				i.element.style.stroke = 'rgb(0, 142, 208)'
+			}else{
+				i.element.style.cursor = 'default';
+				i.element.style.stroke = '#FF9933';
+			}
+		});
+	}else{
+		shapes.map(function(i){
+			i.active = false;
+			i.element.style.cursor = 'default'
+			i.element.style.stroke = '#FF9933';
+		});
+	}
+}
+
+SVG.prototype.selectShape = function(x,y,elem){
+	if(shapeTools[0].active){
+		var tempThis = this;
+		//var shapeHolder = document.getElementById('shapeHolder');
+		if(elem.id != 'prevBTN'){
+			if(elem.id != 'shapeText'){
+				var txtHolder = document.getElementById('shapeHolder');
+				var txtShape = document.getElementById('shapeText');
+				
+				if(elem.parentNode.id == "Workspace"){
+					
+					for(var i=0;i<elem.parentNode.childNodes.length;i++){
+						if(elem.parentNode.childNodes[i] == elem){
+							elem.parentNode.childNodes[i].style.cursor = 'move';
+							elem.parentNode.childNodes[i].style.position = 'relative';
+							elem.parentNode.childNodes[i].style.stroke = 'rgb(0, 142, 208)';
+							if(elem.parentNode.childNodes[i].className.baseVal != "Arrow"){
+								document.getElementById('shapeMenu').style.display = 'block';
+								document.getElementById('shapeMenu').style.width = '260px';
+							}else{
+								document.getElementById('shapeMenu').style.display = 'none';
+								document.getElementById('shapeMenu').style.width = '0px';
+							}
+						}else{
+							elem.parentNode.childNodes[i].style.cursor = 'default';
+							elem.parentNode.childNodes[i].style.stroke = '#FF9933';
+							
+							for(var e=0;e<txtHolder.children.length;e++){
+								txtHolder.children[e].setAttribute('active','false')
+								txtHolder.children[e].firstChild.style.color = '#FF9933';
+							}
+						}
+					}
+		
+					for(var e=0;e<txtHolder.children.length;e++){
+						txtHolder.children[e].setAttribute('active','false')
+						txtHolder.children[e].firstChild.style.color = '#FF9933';
+					}
+				
+					shapes.map(function(i){
+						if(i.element == elem){
+							i.active = true;
+							for(var e=0;e<txtHolder.children.length;e++){
+								var ref = txtHolder.children[e].getAttribute('shape-reference');
+								var typ = txtHolder.children[e].getAttribute('type');
+								if(ref == i.id && typ == 'inside'){
+									txtHolder.children[e].setAttribute('active','true');
+									txtHolder.children[e].firstChild.style.color = 'rgb(0, 142, 208)';
+									txtShape.value = i.text;
+								
+									document.getElementById('trainImg').getElementsByTagName('input')[0].value = i.image;
+									document.getElementById('img').innerHTML = i.image == "" ? "" : i.image.substring(i.image.lastIndexOf("\\")+1,i.image.length) + "<b style='color:red;cursor:pointer;' onclick='remAttach(this.parentNode)'> x</b>";;
+									document.getElementById('trainFile').getElementsByTagName('input')[0].value = i.file;
+									document.getElementById('fle').innerHTML = i.file == "" ? "" : i.file.substring(i.file.lastIndexOf("\\")+1,i.file.length) + "<b style='color:red;cursor:pointer;' onclick='remAttach(this.parentNode)'> x</b>";;
+								}
+							}
+						}else{
+							i.active = false;
+						}	
+					});
+					
+					lines.map(function(i){
+						if(i.element == elem){
+							i.active = true;
+						}else{
+							i.active = false;
+						}
+					});
+					
+				}else if(elem.firstChild.id == "Workspace"){
+					
+					for(var i=0;i<elem.firstChild.childNodes.length;i++){
+						document.getElementById('shapeMenu').style.width = '0px';
+						document.getElementById('shapeMenu').style.display = 'none';
+						elem.firstChild.childNodes[i].style.cursor = 'default';
+						elem.firstChild.childNodes[i].style.stroke = '#FF9933';
+					}
+					for(var i=0;i<shapes.length;i++){
+						shapes[i].active = false;
+					}
+									
+					for(var e=0;e<txtHolder.children.length;e++){
+						var ref = txtHolder.children[e].getAttribute('shape-reference');
+						var typ = txtHolder.children[e].getAttribute('type');
+						txtHolder.children[e].setAttribute('active','false')
+						txtHolder.children[e].firstChild.style.color = '#FF9933';
+						
+						/*shapes.forEach(function(j){
+							if(j.id == ref && typ == 'inside'){
+								j.text = txtHolder.children[e].firstChild.innerText;
+							}
+						});*/
+					}
+				}
+			}
+		}
+		
+		mouseX = x - this.box.left + this.elem.scrollLeft;
+		mouseY = y - this.box.top + this.elem.scrollTop;
+		
+		shapes.map(function(i){
+			if(i.active && i.element == elem){
+				switch(i.shape){
+					case 'Rectangle':
+					case 'Oval':
+						if(mouseX >= elem.x.baseVal.value && mouseX < elem.x.baseVal.value + elem.width.baseVal.value - 10 &&
+							mouseY >= elem.y.baseVal.value && mouseY < elem.y.baseVal.value + elem.height.baseVal.value - 10){
+								dist.initX = mouseX - elem.x.baseVal.value;
+								dist.initY = mouseY - elem.y.baseVal.value;
+								dist.finalX = (elem.x.baseVal.value + elem.width.baseVal.value) - mouseX;
+								dist.finalY = (elem.y.baseVal.value + elem.height.baseVal.value) - mouseY;
+								resize.move = true;
+						}else if(mouseX <= (elem.x.baseVal.value + elem.width.baseVal.value) + 10 && mouseX >= (elem.x.baseVal.value + elem.width.baseVal.value) - 10 &&
+							mouseY <= (elem.y.baseVal.value + elem.height.baseVal.value) + 10 && mouseY >= (elem.y.baseVal.value + elem.height.baseVal.value) - 10){
+								resize.se = true;
+						}else if(mouseX <= (elem.x.baseVal.value + elem.width.baseVal.value) + 10 && mouseX >= (elem.x.baseVal.value + elem.width.baseVal.value) - 10 &&
+							mouseY >= elem.y.baseVal.value && mouseY <= elem.y.baseVal.value + elem.height.baseVal.value){
+								resize.e = true;
+						}else if(mouseY <= (elem.y.baseVal.value + elem.height.baseVal.value) + 10 && mouseY >= (elem.y.baseVal.value + elem.height.baseVal.value) - 10 &&
+							mouseX >= elem.x.baseVal.value && mouseX <= elem.x.baseVal.value + elem.width.baseVal.value){
+								resize.s = true;
+						}
+						break;
+					case 'Diamond':
+						getDPoints(elem);
+						if(mouseX >= dPoints[3].x && mouseX <= dPoints[1].x - 10 && mouseY >= dPoints[0].y && mouseY <= dPoints[2].y - 10){
+							dist.initX = mouseX - dPoints[3].x;
+							dist.initY = mouseY - dPoints[0].y;
+							dist.finalX = dPoints[1].x - mouseX;
+							dist.finalY = dPoints[2].y - mouseY;
+							resize.move = true;
+						}else if(mouseX <= dPoints[2].x + 10 && mouseX >= dPoints[2].x - 10 && mouseY <= dPoints[2].y + 10 && mouseY >= dPoints[2].y - 10){
+							resize.s = true;
+						}else if(mouseX <= dPoints[1].x + 10 && mouseX >= dPoints[1].x - 10 && mouseY <= dPoints[1].y + 10 && mouseY >= dPoints[1].y - 10){
+							resize.e = true;
+						}
+				}
+			}
+		});	
+		lines.map(function(i){
+			if(i.active && i.element == elem){
+				if(mouseX > i.coordinates.initX - 10 && mouseX < i.coordinates.initX + 10 &&
+					mouseY > i.coordinates.initY - 10 && mouseY < i.coordinates.initY + 10 ){
+					//move first points
+					moveLines.s = true;
+				}else if(mouseX > i.coordinates.finalX - 10 && mouseX < i.coordinates.finalX + 10 &&
+					mouseY > i.coordinates.finalY - 10 && mouseY < i.coordinates.finalY + 10 ){
+					//move last points
+					moveLines.e = true;
+				}else{
+					moveLines.r = true;
+				}
+			}
+		});
+	}
+}
+
+SVG.prototype.resizeShape = function(x,y,elem){
+	mouseX = x - this.box.left + this.elem.scrollLeft;
+	mouseY = y - this.box.top + this.elem.scrollTop;
+	
+	var tempHolder = this;
+	
+	if(shapeTools[0].active){
+		shapes.map(function(i){
+			if(i.element == elem && i.active){
+				document.getElementById('shapeMenu').style.width = '0px';
+				document.getElementById('shapeMenu').style.display = 'none';
+			}
+			if(i.active){	
+				switch(i.shape){
+					case 'Rectangle':
+					case 'Oval':					
+						if(!resize.move){
+							if(resize.e){
+								i.element.style.cursor = "e-resize";
+								i.element.width.baseVal.value = mouseX - i.coordinates.initX;
+							}else if(resize.s){
+								i.element.style.cursor = "s-resize";
+								i.element.height.baseVal.value = mouseY - i.coordinates.initY;
+							}else if(resize.se){
+								i.element.style.cursor = "se-resize";
+								i.element.width.baseVal.value = mouseX - i.coordinates.initX;
+								i.element.height.baseVal.value = mouseY - i.coordinates.initY;
+							}
+							
+							coor.initX = i.element.x.baseVal.value;
+							coor.initY = i.element.y.baseVal.value;
+							coor.finalX = i.element.x.baseVal.value + i.element.width.baseVal.value;
+							coor.finalY = i.element.y.baseVal.value + i.element.height.baseVal.value;
+							
+							i.textElement.style.width = i.element.width.baseVal.value + 'px';
+							i.textElement.style.height = i.element.height.baseVal.value + 'px';
+							
+							getPoints();
+							
+							lines.map(function(j){
+								for(var k in i.connection){
+									if(i.connection[k] == j.id){
+										if(j.connectedFrom == i.id){
+											j.coordinates.initX = points[k + 'X'];
+											j.coordinates.initY = points[k + 'Y'];
+										}else if(j.connectedTo == i.id){
+											j.coordinates.finalX = points[k + 'X'];
+											j.coordinates.finalY = points[k + 'Y'];
+										}
+										j.element.setAttribute('d',changeLines(j.fromPosition,j.toPosition,j.coordinates.initX,j.coordinates.initY,j.coordinates.finalX,j.coordinates.finalY));
+									}
+								}
+							});
+							
+						}
+						break;
+					case 'Diamond':
+						
+						getDPoints(i.element);
+						
+						coor.initX = dPoints[3].x;
+						coor.initY = dPoints[0].y;
+						coor.finalX = dPoints[1].x;
+						coor.finalY = dPoints[2].y;
+						
+						if(!resize.move){
+							if(resize.e){
+								coor.finalX = mouseX;
+								i.element.style.cursor = "e-resize";
+								i.element.setAttribute("d",dPath());
+							}else if(resize.s){
+								coor.finalY = mouseY;
+								i.element.style.cursor = "s-resize";
+								i.element.setAttribute("d",dPath());
+							}
+							
+							i.textElement.style.width = (coor.finalX - coor.initX) + 'px';
+							i.textElement.style.height = (coor.finalY - coor.initY) + 'px';
+							
+							getPoints();
+							
+							lines.map(function(j){
+								for(var k in i.connection){
+									if(i.connection[k] == j.id){
+										
+										if(j.connectedFrom == i.id){
+											j.coordinates.initX = points[k + 'X'];
+											j.coordinates.initY = points[k + 'Y'];
+											var lastLine = j.element.getAttribute('d').slice(j.element.getAttribute('d').indexOf('L'),j.element.getAttribute('d').length);
+											j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' ' + lastLine);
+										}else if(j.connectedTo == i.id){
+											j.coordinates.finalX = points[k + 'X'];
+											j.coordinates.finalY = points[k + 'Y'];
+											if(k == 'top'){
+												j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' L ' + j.coordinates.finalX + ' ' + (j.coordinates.finalY - 10) +
+																			'M ' + j.coordinates.finalX + ' ' + j.coordinates.finalY + ' L ' + (j.coordinates.finalX + 7) + ' ' + (j.coordinates.finalY - 10) + ' L ' +
+																			(j.coordinates.finalX - 7) + ' ' + (j.coordinates.finalY - 10) + ' Z ');
+											}else if(k == 'bottom'){
+												j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' L ' + j.coordinates.finalX + ' ' + (j.coordinates.finalY + 10) + 
+																			'M ' + j.coordinates.finalX + ' ' + j.coordinates.finalY + ' L ' + (j.coordinates.finalX + 7) + ' ' + (j.coordinates.finalY + 10) + ' L ' +
+																			(j.coordinates.finalX - 7) + ' ' + (j.coordinates.finalY + 10) + ' Z ');
+											}else if(k == 'left'){
+												j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' L ' + (j.coordinates.finalX-10) + ' ' + j.coordinates.finalY + 
+																			'M ' + j.coordinates.finalX + ' ' + j.coordinates.finalY + ' L ' + (j.coordinates.finalX - 10) + ' ' + (j.coordinates.finalY + 7) + ' L ' +
+																			(j.coordinates.finalX - 10) + ' ' + (j.coordinates.finalY - 7) + ' Z ');
+											}else if(k == 'right'){
+												j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' L ' + (j.coordinates.finalX+10) + ' ' + j.coordinates.finalY + 
+																			'M ' + j.coordinates.finalX + ' ' + j.coordinates.finalY + ' L ' + (j.coordinates.finalX + 10) + ' ' + (j.coordinates.finalY + 7) + ' L ' +
+																			(j.coordinates.finalX + 10) + ' ' + (j.coordinates.finalY - 7) + ' Z ');
+											}
+										}
+										//j.element.setAttribute('d','M ' + j.coordinates.initX + ' ' + j.coordinates.initY + ' L ' + j.coordinates.finalX + ' ' + j.coordinates.finalY);
+									}
+								}
+							});
+							
+							coor = {};
+							dPoints = [];
+							break;
+						}
+				}
+			}
+			
+		});
+	}
+}
+
+SVG.prototype.moveShape = function(x,y,elem){
+	
+	mouseX = x - this.box.left + this.elem.scrollLeft;
+	mouseY = y - this.box.top + this.elem.scrollTop;
+	
+	var tempHolder = this;
+	
+	if(elemHolder == ""){
+		elemHolder = elem
+	}
+
+	if(shapeTools[0].active){
+		shapes.map(function(i){
+			if(i.active && i.element == elemHolder){
+				
+				document.getElementById('shapeMenu').style.width = '0px';
+				document.getElementById('shapeMenu').style.display = 'none';
+						
+				switch(i.shape){
+					case 'Rectangle':
+					case 'Oval':
+						if(resize.move){
+							coor.initX = mouseX - dist.initX;
+							coor.initY = mouseY - dist.initY;
+							coor.finalX = dist.finalX + mouseX;
+							coor.finalY = dist.finalY + mouseY;
+							
+							elemHolder.x.baseVal.value = coor.initX;
+							elemHolder.y.baseVal.value = coor.initY;
+							
+							i.textElement.style.left = coor.initX + 'px';
+							i.textElement.style.top = coor.initY + 'px';
+						}
+						break;
+						
+					case 'Diamond':
+						if(resize.move){
+							
+							getDPoints(elemHolder);
+							
+							coor.initX = mouseX - dist.initX;
+							coor.initY = mouseY - dist.initY;
+							coor.finalX = dist.finalX + mouseX;
+							coor.finalY = dist.finalY + mouseY;
+							
+							elemHolder.setAttribute('d',dPath());	
+							
+							i.textElement.style.left = coor.initX + 'px';
+							i.textElement.style.top = coor.initY + 'px';
+							
+							var txtHolder = document.getElementById('shapeHolder');
+							var postX, postY;
+							
+							for(var j=0;j<txtHolder.children.length;j++){
+								
+								if(txtHolder.children[j].getAttribute('shape-reference') == i.id && txtHolder.children[j].getAttribute('type') == 'label'){
+									var txtElement = txtHolder.children[j];
+								
+								
+									if(txtElement.getAttribute('sides') == 'top'){
+										txtElement.style.left = (points.topX + 10) + 'px';
+										txtElement.style.top = (points.topY - 25) + 'px';
+									}
+									
+									if(txtElement.getAttribute('sides') == 'right'){
+										txtElement.style.left = (points.rightX + 10) + 'px';
+										txtElement.style.top = (points.rightY - 25) + 'px';
+									}
+									
+									if(txtElement.getAttribute('sides') == 'bottom'){
+										txtElement.style.left = (points.bottomX + 10) + 'px';
+										txtElement.style.top = (points.bottomY + 5) + 'px';
+									}
+									
+									if(txtElement.getAttribute('sides') == 'left'){
+										txtElement.style.left = (points.leftX - 15) + 'px';
+										txtElement.style.top = (points.leftY - 25) + 'px';
+									}
+
+								}
+							}
+
+						}
+						break;
+				}
+				
+				if(resize.move){
+				
+					getPoints();
+					
+					lines.map(function(j){
+						for(var k in i.connection){
+							if(i.connection[k] == j.id){
+
+								if(j.connectedFrom == i.id){
+									
+									j.coordinates.initX = points[k + 'X'];
+									j.coordinates.initY = points[k + 'Y'];
+
+								}else if(j.connectedTo == i.id){
+									
+									j.coordinates.finalX = points[k + 'X'];	
+									j.coordinates.finalY = points[k + 'Y'];
+								}
+
+								j.element.setAttribute('d',changeLines(j.fromPosition,j.toPosition,j.coordinates.initX,j.coordinates.initY,j.coordinates.finalX,j.coordinates.finalY));
+								
+							}
+						}
+					});
+				}
+				
+			}
+		});
+	}
+}
+
+SVG.prototype.deleteShape = function(k){
+	if(k == 46){
+		var tempHolder = this
+		
+		shapes = shapes.filter(function(x){
+						if(!x.active){
+							return x;
+						}else{
+							x.element.parentNode.removeChild(x.element);
+							x.textElement.parentNode.removeChild(x.textElement);
+							
+							if(x.shape == "Diamond"){
+								var txtHolders = document.getElementById('shapeHolder');
+								
+								for(var j=0;j<txtHolders.children.length;j++){
+									if(txtHolders.children[j].getAttribute('shape-reference') == x.id){
+										txtHolders.removeChild(txtHolders.children[j]);
+										j -= 1;
+									}
+								}
+							}
+							
+						}
+					});
+					
+		lines = lines.filter(function(x){
+						if(!x.active){
+							return x;
+						}else{
+							shapes.map(function(y){
+								for(var z in y.connection){
+									if(y.connection[z] == x.id){
+										y.connection[z] = "";
+									}
+								}
+								if(y.shape == 'Diamond'){
+									var txtHolders = document.getElementById('shapeHolder');
+									
+									if(y.yes.line == x.id){
+										for(var j=0;j<txtHolders.children.length;j++){
+											if(txtHolders.children[j].getAttribute('shape-reference') == y.id && txtHolders.children[j].getAttribute('type') == 'label'){
+												if(txtHolders.children[j].getAttribute('label') == 'Y'){
+													txtHolders.removeChild(txtHolders.children[j]);
+													y.yes.id = "";
+													y.yes.line = "";
+													y.yes.post = "";
+													j -= 1;
+												}
+											}
+										}
+									}
+									
+									if(y.no.line == x.id){
+										for(var j=0;j<txtHolders.children.length;j++){
+											if(txtHolders.children[j].getAttribute('shape-reference') == y.id && txtHolders.children[j].getAttribute('type') == 'label'){
+												if(txtHolders.children[j].getAttribute('label') == 'N'){
+													txtHolders.removeChild(txtHolders.children[j]);
+													y.no.id = "";
+													y.no.line = "";
+													y.no.post = "";
+													j -= 1;
+												}
+											}
+										}
+									}
+								}
+							});
+							x.element.parentNode.removeChild(x.element);
+						}
+					});
+	}
+}

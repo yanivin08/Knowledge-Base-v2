@@ -1,0 +1,173 @@
+var category = document.getElementById('categoryList'),
+	month = document.getElementById('monthList'),
+	day = document.getElementById('dayList'),
+	year = document.getElementById('yearList'),
+	updateTitle = document.getElementById('upd8Title'),
+	updateCategory = document.getElementById('upd8Category').getElementsByTagName('select')[0],
+	updateEmp = document.getElementById('upd8EmpID'),
+	updateMonth = document.getElementById('upd8Month').getElementsByTagName('select')[0],
+	updateDay = document.getElementById('upd8Day').getElementsByTagName('select')[0],
+	updateYear = document.getElementById('upd8Year').getElementsByTagName('select')[0],
+	updateDocs = document.getElementById('upd8Text'),
+	updateImg = document.getElementById('upd8Img').getElementsByTagName('input')[0],
+	updateFile = document.getElementById('upd8File').getElementsByTagName('input')[0],
+	err = document.getElementById('errorMsg'),
+	msg = document.getElementById('msgBx').getElementsByTagName('span')[0];
+
+
+function exec(cmd){
+	document.execCommand(cmd, false, null);
+}
+	
+function removeImg(){
+	document.getElementById('upd8Img').getElementsByTagName('input')[0].value = ""
+	document.getElementById('img').innerHTML = "";
+}
+
+function getImg(){
+	var filePath = document.getElementById('upd8Img').getElementsByTagName('input')[0].value,
+		fileName = filePath.substring(filePath.lastIndexOf("\\")+1,filePath.length),
+		fileShow = document.getElementById('img');
+		
+	fileShow.innerHTML = fileName + "<b id='removeImg' onclick='removeImg()'> x</b>";
+}
+
+
+function removeFile(){
+	document.getElementById('upd8File').getElementsByTagName('input')[0].value = ""
+	document.getElementById('file').innerHTML = "";
+}
+
+function getFile(){
+	var filePath = document.getElementById('upd8File').getElementsByTagName('input')[0].value,
+		fileName = filePath.substring(filePath.lastIndexOf("\\")+1,filePath.length),
+		fileShow = document.getElementById('file');
+		
+	fileShow.innerHTML = fileName + "<b id='removeImg' onclick='removeFile()'> x</b>";
+}
+
+
+function clearField(){
+	updateTitle.value = "";
+	updateEmp.value = "";
+	updateMonth.value = "";
+	updateDay.value = "";
+	updateYear.value = "";
+	updateDocs.innerHTML = "";
+	updateCategory.value = "";
+	updateImg.value = "";
+	updateFile.value = "";
+	document.getElementById('img').innerHTML = "";
+	document.getElementById('file').innerHTML = "";
+}
+
+/*uploading daily updates modules*/
+function uploadModule(){
+
+	if(updateTitle.value != "" && updateCategory.value != "" && updateEmp.value != "" && updateMonth.value != "" && updateDay.value != "" &&
+		updateYear.value != "" && updateDocs.innerHTML != ""){
+		var id = checkUser();
+		
+		if(id == updateEmp.value){
+			if(approveId.indexOf(id) != -1){	
+					var src = document.getElementsByTagName('script')[0].src,
+						docPath = src.substring(0,path.lastIndexOf("/"));
+						docPath = docPath.replaceAll("%20"," ").substring(filePathIndex(docPath),docPath.length);
+					var	imgPath = docPath.substring(0,docPath.lastIndexOf("/")) + "/img/",
+						fso = new ActiveXObject("Scripting.FileSystemObject");
+						
+					var uploadedImg = "",uploadedFile = "";
+					/*copy uploaded image to a specific folder*/
+					if(document.getElementById('img').innerHTML != ""){
+						var elem = document.getElementById('upd8Img').getElementsByTagName('input')[0],
+							orig = elem.value.replaceAll("\\","/"),
+							fileExt = orig.substring(orig.lastIndexOf("."),orig.length),
+							dest = imgPath + "updates/",
+							imgName = updateTitle.value + "_" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value + fileExt;
+							if(fso.FileExists(dest + imgName)){
+								alert("file exist");	
+							}
+							
+							fso.CopyFile(orig, dest + imgName, false); /*copy from orig to dest*/
+							uploadedImg = "img/updates/" + imgName
+					}else{
+						uploadedImg = "img/main/default.png"
+					}
+					
+					if(document.getElementById('file').innerHTML != ""){
+						/*copy uploaded file to a specific folder*/
+						filePath = docPath.substring(0,docPath.lastIndexOf("/")) + "/attach/";
+						var elem = document.getElementById('upd8File').getElementsByTagName('input')[0],
+							orig = elem.value.replaceAll("\\","/"),
+							fileExt = orig.substring(orig.lastIndexOf("."),orig.length),
+							dest = filePath + "updates/",
+							fileName = updateTitle.value + "_" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value + fileExt;
+							if(fso.FileExists(dest + fileName)){
+								//console.log("file exist, please change the title.");
+							}
+							fso.CopyFile(orig, dest + fileName, false); /*copy from orig to dest*/
+							uploadedFile = "attach/updates/" + fileName;
+					}else{
+						uploadedFile = "none"
+					}
+					
+					/*add updates/docs to a specific folder*/
+					var txtPath = docPath + "/updates/" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value,
+						txtName = "/" + updateTitle.value + "_" + updateCategory.value + ".up";
+
+					/*create folder if not exist*/
+						if(!fso.FolderExists(txtPath)){
+							fso.CreateFolder(txtPath);
+						}
+						if(fso.FileExists(txtPath + txtName)){
+							alert("Title already exist in this module");
+						}
+					var txt = fso.CreateTextFile(txtPath + txtName, true);
+						txt.writeline(updateDocs.innerHTML);
+						txt.Close();
+						
+					/*edit the JSON file*/
+					
+					var newContent = {};
+						newContent.title = updateTitle.value;
+						newContent.category = updateCategory.value;
+						newContent.module = "updates";
+						newContent.date = updateMonth.value + " " + updateDay.value + ", " + updateYear.value;
+						newContent.path = ("/updates/" + updateMonth.value + "_" + updateDay.value + "_" + updateYear.value + txtName).replaceAll(" ","%20");
+						newContent.imgpath = uploadedImg;
+						newContent.filepath = uploadedFile;
+						newContent.empid = updateEmp.value;
+						newContent.visit = 0
+					
+					data.push(newContent);
+					
+					var jsonPath = docPath + "/updates.txt",
+						jsonWrite = fso.OpenTextFile(jsonPath, 2);
+						jsonWrite.WriteLine(JSON.stringify(data));
+						jsonWrite.Close();
+						
+					alert("Update has been uploaded!");
+					clearField();
+					
+			}else{
+				msg.innerText = "You are not authorized to upload and amend any updates in this tool."
+				err.style.display = "block";
+				err.style.opacity = "1";
+			}
+		}else{
+			msg.innerText = "Seems like you are trying to use other Employee ID, please try again."
+			err.style.display = "block";
+			err.style.opacity = "1";
+		}								
+	}else{
+		msg.innerText = "Please fill up all required field before uploading the form"
+		err.style.display = "block";
+		err.style.opacity = "1";		
+	}
+}
+
+function hideError(){
+	var err = document.getElementById('errorMsg');
+		err.style.display = "none";
+		err.style.opacity = "0";
+}

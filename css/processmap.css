@@ -1,0 +1,51 @@
+* {
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+	font-family: century gothic
+}
+
+#svgTools {
+	float: left;
+	height: 100vh;
+	width: 130px;
+	background-color: rgb(16,45,94);
+	box-shadow: 5px 0px 10px rgba(0,0,0,.5);
+}
+
+#svgTools svg{
+	stroke-width: 3;
+}
+
+#svgChart {
+	margin-left: 130px;
+	height: 100vh;
+	position:relative;
+	background-color: rgb(220,220,220);
+	background-image: url(../img/main/bg.png);
+	background-size: 180px;
+	overflow: auto;
+}
+
+#svgChart svg{
+	stroke-width: 3;
+	stroke: #FF9933;
+	fill: rgba(220,220,220,0);
+}
+
+.inactive{
+	fill: rgb(16,45,94);
+	stroke: rgb(0, 142, 208);
+	cursor: pointer;
+}
+
+.inactive:hover{
+	fill: rgb(16,45,94);
+	stroke: #FF9933;
+}
+
+.active{
+	fill: #FF9933;
+	stroke: #FF9933;
+	cursor: pointer;
+}

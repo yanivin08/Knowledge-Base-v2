@@ -1,0 +1,386 @@
+var graphDiv = document.getElementById('mainGraph');
+var canvas = document.getElementsByTagName('canvas')[0],
+	ctx = canvas.getContext('2d');
+var visitData = [];
+var percentageUpdates = 0,
+	percentageTraining = 0;
+	
+	
+
+function createGraph(visitData){
+
+	
+	
+	if(visitData != 0){
+		//create an array of the data for the graph
+		/*visitData = [{'date':'6/1/2018','visit':500},
+					 {'date':'6/2/2018','visit':153},
+					 {'date':'6/3/2018','visit':366},
+					 {'date':'6/4/2018','visit':185},
+					 {'date':'6/5/2018','visit':223},
+					 {'date':'6/6/2018','visit':186},
+					 {'date':'6/7/2018','visit':154}];*/
+			
+		canvas.width = graphDiv.clientWidth - (graphDiv.clientWidth*.1); //canvas height
+		canvas.height = graphDiv.clientHeight - (graphDiv.clientHeight*.20); //canvas weight
+		//scale and translate the canvas to get the specific x,y coordinate
+		ctx.scale(1,-1);
+		ctx.translate(canvas.width*.10,-(canvas.height-(canvas.height*.15)));
+		var xValue = visitData.map(function(x){ return x.date;}); //get the label
+		var yValue = visitData.map(function(x){ return x.visit;}); //get the xvalue
+		
+		var maxY = getMaxOfArray(yValue) + getMaxOfArray(yValue)*.10; //min value
+		var minY = getMinOfArray(yValue) - getMinOfArray(yValue)*.10; //max value
+
+		//convert the number of visits to a certain number for ploting purposes
+		//number will be the y coordinate of the plot
+		var valueY = yValue.map(function(x){
+							return parseInt(x/maxY*(canvas.height - (canvas.height*.15)))
+						});
+		//threshold or distance between points				
+		var xThreshold = parseInt((canvas.width-(canvas.width*.15))/(xValue.length+1));
+		var valueX = []; //<-- storage of the x coordinate of the plot base on the threshold;
+		var entry = xThreshold;
+		for(var i=0;i<xValue.length;i++){
+			valueX.push(entry);
+			entry += xThreshold;
+		}
+		drawLabelY(yValue);
+		drawGraph();
+		plotGraph(maxY,xValue,valueX,valueY);		
+	}
+	
+}
+
+window.addEventListener('onload',onLoadPage,false);
+window.addEventListener('resize',onLoadPage,false);
+
+
+function getMaxOfArray(numArray) {
+  return Math.max.apply(null, numArray);
+}
+
+function getMinOfArray(numArray) {
+  return Math.min.apply(null, numArray);
+}
+
+function onLoadPage(){
+	getMonth();
+	var arry = getVisitData('07');
+	createGraph(arry);	
+	getTop10();
+	doughnutChart('training');
+	doughnutChart('updates');
+
+}
+
+
+function plotGraph(max,label,x,y){
+	//plot the graph using the x and y coordinate
+	ctx.beginPath();
+	ctx.lineWidth = 2;
+	ctx.moveTo(x[0],y[0]);
+	for(var i=1;i<x.length;i++){
+		ctx.lineTo(x[i],y[i]);
+	}
+	ctx.strokeStyle = "rgb(0, 148, 255)";
+	ctx.stroke();
+	ctx.closePath();
+	
+	for(var i=0;i<x.length;i++){
+		createCircle(x[i],y[i]); //add small circle in each plot
+		drawLabelX(label[i],x[i],25); //put x label
+	}
+	
+}
+
+function createCircle(x,y){
+	//create circles
+	ctx.beginPath();
+	ctx.arc(x,y,canvas.width*.004 + canvas.height*.004,0,2 * Math.PI,false);
+	ctx.fillStyle = "rgb(240,240,240)";
+	ctx.fill();
+	ctx.lineWidth = 2;
+	ctx.strokeStyle = "rgb(0, 148, 255)";
+	ctx.stroke();
+	ctx.closePath();
+}
+
+function drawGraph(){
+	//draw x and y line
+	ctx.beginPath()
+	ctx.lineWidth = 1;
+	ctx.moveTo(0,0);
+	ctx.lineTo(canvas.width-(canvas.width*.15),0);
+	ctx.moveTo(0,0);
+	ctx.lineTo(0,canvas.height);
+	ctx.moveTo(canvas.width-(canvas.width*.15),0);
+	ctx.lineTo(canvas.width-(canvas.width*.15),canvas.height);
+	ctx.strokeStyle = "rgb(225,225,225)";
+	ctx.stroke();
+	ctx.closePath();
+}
+
+function drawLabelX(lbl,x,y){
+
+	
+	lbl = lbl.substring(lbl.indexOf('/')+1,lbl.lastIndexOf('/'));
+	
+	//create label for x value
+	ctx.save(); //<-- this is to save the current state of the canvas
+	//scale back to normal canvas to make the fill text in a normal state
+	ctx.scale(1,-1); 
+	ctx.fillStyle = "gray";
+	ctx.textAlign = "center";
+	ctx.fillText(lbl,x,y);
+	ctx.restore();//<-- restore back to the state where it save
+}
+
+function drawLabelY(arr){
+	var max = parseInt((getMaxOfArray(arr)+(getMaxOfArray(arr)*.10))/3),
+		yThreshold = parseInt((canvas.height - (canvas.height*.15))/3),
+		dis = yThreshold,
+		stY = 0;
+	
+	ctx.save();
+	ctx.scale(1,-1); 
+	ctx.fillStyle = "gray";
+	ctx.textAlign = "center";
+	ctx.fillText(stY,-20,5);
+	ctx.restore();
+	
+	for(var i=0;i<3;i++){
+		stY += max;
+		ctx.beginPath();
+		ctx.lineWidth = 1;
+		ctx.moveTo(0,dis);
+		ctx.lineTo(canvas.width-(canvas.width*.15),dis);
+		ctx.strokeStyle = "rgb(225,225,225)";
+		ctx.stroke();
+		ctx.closePath();
+		
+		ctx.save(); //<-- this is to save the current state of the canvas
+		ctx.scale(1,-1); 
+		ctx.fillStyle = "gray";
+		ctx.textAlign = "center";
+		ctx.fillText(stY,-20,-dis+5);
+		ctx.restore();//<-- restore back to the state where it save
+		
+		dis += yThreshold;
+	}
+	
+	ctx.save(); //<-- this is to save the current state of the canvas
+	ctx.scale(1,-1);
+	ctx.rotate(-90*Math.PI/180);	
+	ctx.font = "11px Arial Black";
+	ctx.fillStyle = "rgb(0, 148, 255)";
+	ctx.textAlign = "center";
+	ctx.fillText("TOTAL NO OF VISITS",parseInt((canvas.height - (canvas.height*.15))/2),-45);
+	ctx.restore();//<-- restore back to the state where it save
+	
+}
+
+
+function getTop10(){
+	var topUpdates = data.sort(function(a,b){
+						return b.visit - a.visit;
+					 });
+	var totalVisits = topUpdates.map(function(x){ return x.visit; }).reduce(function(a,b){ return a+b; });
+	var topViewer = document.getElementById('updatesTop5');
+	var top10Content = "<h5>MOST VISITED MODULES</h5>";
+	
+	
+	for(var i=0;i<10;i++){
+		var visitPercent = ((topUpdates[i].visit/totalVisits)*100).toFixed(1),
+			visitNme = topUpdates[i].title.substring(0,25);
+			
+		top10Content += "<div class=\"top5\">" +
+							"<div class=\"title\">" +
+								visitNme +
+							"</div>" +
+							"<div class=\"container\">" +
+								"<div class=\"percentage\">" + visitPercent + "%</div>" +
+							"</div>" + 
+						"</div>";
+		
+	}
+	
+	topViewer.innerHTML = top10Content
+	setWidth();
+}
+
+function setWidth(){
+
+	var top10 = document.getElementsByClassName("percentage");
+	
+	for(var i=0;i<top10.length;i++){
+		if(top10[i].innerHTML == "0.0%"){
+			top10[i].style.opacity = "0";
+		}else{
+			var tempPercent = parseFloat(top10[i].innerHTML.substring(0,top10[i].innerHTML.indexOf('%'))) + 20;
+			top10[i].style.width = tempPercent + "%";//top10[i].innerHTML;
+		}
+	}
+}
+
+
+function getMonth(){
+
+	var monthArray = {January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
+					  July: '07', August: '08', September: '09', October: '10', Novermber: '11', December: '12'};
+	
+	adOpenForwardOnly = 0;  
+	adLockReadOnly = 1;  
+	adCmdText = 1;
+	var selection = document.getElementById('selectionHolder').getElementsByTagName('select')[0],
+		selectContent = "<option value=''>Select Month</option>";
+	var adRecs = new ActiveXObject("ADODB.Recordset"),
+		src = document.getElementsByTagName("script")[0].src.replaceAll("%20"," ");
+		src = src.substring(filePathIndex(src),src.lastIndexOf("/")+1) + "cookies/LogDetails.accdb";
+	var strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + src,
+		strComm = "SELECT FORMAT(startDate,'MMMM') as visitMonth FROM visitLog GROUP BY FORMAT(startDate,'MMMM');";
+		
+	
+	adRecs.Open(strComm,   
+             strConn,
+             adOpenForwardOnly,  
+             adLockReadOnly,  
+             adCmdText);
+			 
+	if(!adRecs.EOF){
+		while (!adRecs.EOF){
+			selectContent += "<option value='" + monthArray[adRecs("visitMonth").value] + "'>" + adRecs("visitMonth").value + "</option>"
+			adRecs.MoveNext();  
+		}
+	}
+	
+	selection.innerHTML = selectContent;
+}
+
+
+function getVisitData(monthNum){
+
+
+	var arraysH = [];
+	adOpenForwardOnly = 0;  
+	adLockReadOnly = 1;  
+	adCmdText = 1;
+
+	var adRecs = new ActiveXObject("ADODB.Recordset"),
+		src = document.getElementsByTagName("script")[0].src.replaceAll("%20"," ");
+		src = src.substring(filePathIndex(src),src.lastIndexOf("/")+1) + "cookies/LogDetails.accdb";
+	var strConn = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + src,
+		strComm = "SELECT FORMAT(startDate,'MM/DD/YYYY') as visitDate, COUNT(startDate)as visitCounts FROM visitLog WHERE FORMAT(startDate, 'MM') = '" + monthNum + "' GROUP BY FORMAT(startDate,'MM/DD/YYYY');";
+		
+	
+	adRecs.Open(strComm,   
+             strConn,
+             adOpenForwardOnly,  
+             adLockReadOnly,  
+             adCmdText);
+	if(!adRecs.EOF){
+	
+		adRecs.MoveFirst();  
+		while (!adRecs.EOF){
+			var temp = new Object();
+			temp.date = adRecs("visitDate").value;
+			temp.visit =  adRecs("visitCounts").value;
+			arraysH.push(temp);
+			adRecs.MoveNext();  
+		}
+		return arraysH;
+	}else{
+		return 0;
+	}
+
+	adRecs.Close  
+	adRecs = null;  
+	
+}
+
+function degreesToRadians(deg) {
+	return (deg/180) * Math.PI;
+}
+
+function percentToRadians(percentage) {
+	// convert the percentage into degrees
+	var degrees = percentage * 360 / 100;
+	// and so that arc begins at top of circle (not 90 degrees) we add 270 degrees
+	return degreesToRadians(degrees + 270);
+}
+
+function addTxt(no,ctx,x,y,s){
+	s = s *.80
+	ctx.font = s + "px Arial Black";
+	ctx.fillStyle = "gray";
+	ctx.textAlign = "center";
+	ctx.textBaseline = 'middle'; 
+	ctx.fillText(no+"%",x,y);
+}
+
+function doughnutChart(id,percent){
+	
+	getData();
+	
+	var canvas = document.getElementById(id);
+	var div = canvas.parentElement;
+	
+	var ctx = canvas.getContext('2d');
+	
+	canvas.width = div.clientWidth - (div.clientWidth * .10);
+	canvas.height = div.clientHeight - (div.clientHeight * .10);
+	
+	canvasSize = canvas.width*.06 + canvas.height*.06;
+	var x = canvas.width / 2,
+		y = canvas.height / 2,
+		radius = canvasSize*3,
+		startAngle = percentToRadians(0);
+		endAngle = 0; //percentToRadians(percentageTraining);
+		
+	if(id == "training"){
+		addTxt(percentageTraining,ctx,x,y,canvasSize);
+		endAngle = percentToRadians(percentageTraining);
+	}else{
+		addTxt(percentageUpdates,ctx,x,y,canvasSize);
+		endAngle = percentToRadians(percentageUpdates);
+	}
+	
+	ctx.beginPath();
+	ctx.arc(x,y,radius,startAngle,percentToRadians(100));
+	ctx.lineWidth = canvasSize
+	ctx.strokeStyle = 'rgb(200,200,200)';
+	ctx.stroke();
+		
+	ctx.beginPath();
+	ctx.arc(x,y,radius,startAngle,endAngle);
+	ctx.lineWidth = canvasSize
+	ctx.strokeStyle = 'rgb(0, 148, 255)';
+	ctx.stroke();
+	
+}
+
+function getData(){
+
+	var countUpdates = 0,
+		countTraining = 0,
+		countTotal = 0;
+	
+	for(var i=0;i<data.length;i++){
+		if(data[i].module == "updates"){
+			countUpdates += data[i].visit;
+			countTotal += data[i].visit;
+		}else{
+			countTraining += data[i].visit;
+			countTotal += data[i].visit;
+		}
+	}
+	
+	percentageUpdates = ((countUpdates/countTotal) * 100).toFixed(1),
+	percentageTraining = ((countTraining/countTotal) * 100).toFixed(1);
+	
+}
+
+
+function monthChange(num){
+	createGraph(getVisitData(num));
+}
