@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>United Rentals Inc</title>
+		<meta http-equiv="x-ua-compatible" content="IE=10"/>
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<link rel="stylesheet" type="text/css" href="css/all.css"/>
+		<link rel="stylesheet" type="text/css" href="css/all.css"/>
+	</head>
+	
+	<body onload="pageOnload(),getLatestUpdates(),setCookies()">
+		<div id="mainDiv">
+			<div id="upDiv">
+				<img id="logo" src="img/main/exllogo.png"/>
+				<a href=".\index.html"><p id="menuHome"><i class="fas fa-home"></i>  Home</p></a>
+				<a href=".\page\dashboard.html""><p id="menuDashboard"><i class="fas fa-chart-line"></i>  Dashboard</p></a>
+				<a href="#" id="menuUpload" onmouseover="showUploadMnu()"><p><i class="fas fa-upload"></i> Upload</p></a>
+			</div>
+			<p id="uploadArrow">&#9650;</p>
+			<div id="uploadMenu" onmouseleave="hideUploadMnu(this)">
+				<ul>
+					<a href=".\page\uploadTraining.html"><li>Training Manual</li></a>
+					<a href=".\page\uploadUpdates.html"><li>Daily Updates</li></a>
+				<ul>
+			</div>
+			<div id="midDiv">
+				<img id="bg" src="img/main/xpobanner.jpg">
+				<div id="searchDiv">
+					<input id="searchField" type="text" placeholder="Search title or category here.." onkeyup="searchDta(this.value)">
+					<label>&#128269;<input id='searchSubmit' type="submit" onclick=""></label>
+					<div id="searchRslt">
+						<ul></ul>
+					</div>
+					<div id="updateAnim">
+						<div id="animContent">
+							<div id="slider">
+							</div>
+						</div>
+						<div id="sliderArrow">
+							<span id="right" onclick="nextUpdates()">&#8250;</span>
+							<span id="left" onclick="prevUpdates()">&#8249;</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="downDiv">
+				<div id="trainManual">
+					<img src="img/main/manual.png">
+					<h1>BE INFORMED</h1>
+					<p>Learn more about terms and definitions used at work</p>
+					<a href=".\page\training.html"><input id="" type="submit" value="TRAINING  &#8594;"></a>
+				</div>
+				<div id="updates">
+					<img src="img/main/updates.png">
+					<h1>WATCH OUT</h1>
+					<p>Read daily updates, reminders and best practices</p>
+					<a href=".\page\update.html"><input id="" type="submit" value="UPDATES  &#8594;"></a>
+				</div>
+			</div>
+			<div id="listResult">
+				<span id="arrow" onclick="hideDiv()">&#9660;</span>
+				<div id="listBody"></div>
+			</div>
+			<div id="searchViewer">
+				<div id="searchHeader">
+					<p></p>
+					<h1></h1>
+				</div>
+				<div id="searchContent">
+					<div id="searchUpdate">
+						<img id="imgZoom" onclick="zoomImg()">
+						<p id="docsDate"></p>
+						<p id="docsUser"></p>
+						<div id="txtContent"></div>
+						<a>Download Attachement Here</a>
+						<div id="imgViewer"><h1 onclick="closeImg()">X</h1><img></div>
+					</div>
+					<div id="viewerContent">
+						<div id="pContent">
+							<ol id="contentList"></ol>
+						</div>
+						<div id="pButton">
+							<button id="nextButton" onclick="stepViewer('home')"><i class="far fa-arrow-alt-circle-down"></i></button>
+						</div>
+					</div>
+					<span onclick="back()">&#171;</span>
+				</div>
+			</div>
+			<div id="footDiv">
+			</div>
+		</div>
+		<script type="text/javascript" src="docs/updates.txt"></script>
+		<script type="text/javascript" src="js/main.txt"></script>
+	</body>
+</html>
